@@ -3,7 +3,6 @@
 }*/
 export const Vector = (x: number, y: number): Vector => ({ x, y })
 const map = (v: Vector, f: (v: number) => number) => Vector(f(v.x), f(v.y))
-export const add = (v: Vector, param: number) => map(v, v => v + param)
 export const multiply = (v: Vector, param: number) => map(v, v => v * param)
 export const sum = (v1: Vector, v2: Vector) => Vector(v1.x + v2.x, v1.y + v2.y)
 

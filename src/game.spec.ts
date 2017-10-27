@@ -1,13 +1,9 @@
-import { add, multiply, sum, Vector, update } from './game'
+import { multiply, sum, Vector, update } from './game'
 
 describe("Game", () => {
     describe("Vector", () => {
         it("creates Vecotr", () => {
             expect(Vector(0, 1)).toEqual({ x: 0, y: 1 })
-        })
-
-        it("adds const to vecotr", () => {
-            expect(add(Vector(0, 1), 1)).toEqual({ x: 1, y: 2 })
         })
 
         it("multiply vecotr by const", () => {
@@ -27,7 +23,8 @@ describe("Game", () => {
                 force: Vector(0, 0),
                 velocity: Vector(0, 0)
             }
-            expect(update(rock, 1)).toEqual(rock)
+            const expected = { ...rock }
+            expect(update(rock, 2)).toEqual(expected)
         })
 
         it("Moves object when no force is applyied and object was moving", () => {
@@ -37,11 +34,28 @@ describe("Game", () => {
                 force: Vector(0, 0),
                 velocity: Vector(1, 2)
             }
+
             const expected = {
                 ...ball,
-                location: Vector(1, 2)
+                location: Vector(2, 4)
             }
-            expect(update(ball, 1)).toEqual(expected)
+            expect(update(ball, 2)).toEqual(expected)
         })
+
+        it("defines if a total force F acts on an object of mass m, " +
+            "that object will necessarily accelerate with acceleration a = F / m.", () => {
+                const ball: RigidBody = {
+                    mass: 10,
+                    location: Vector(0, 0),
+                    force: Vector(10, 20),
+                    velocity: Vector(0, 0)
+                }
+                const expected = {
+                    ...ball,
+                    velocity: Vector(1, 2),
+                    location: Vector(1, 2)
+                }
+                expect(update(ball, 1)).toEqual(expected)
+            })
     })
 })
