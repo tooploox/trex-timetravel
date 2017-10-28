@@ -7,6 +7,7 @@ declare const enum BlockType {
 interface Board {
     values: BlockType[]
 }
+
 interface Vector {
     x: number
     y: number

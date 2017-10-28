@@ -53,7 +53,7 @@ describe("Game", () => {
                 expect(update(ball, 1)).toEqual(expected)
             })
 
-        describe("jump algorithm", () => {
+        describe("Jump of rigid body", () => {
             const gravityForce = Vector(0, -10)
             const jumpForce = Vector(0, 20)
             const ball = applyImpulse(applyForce(RigidBody(10), gravityForce), jumpForce)
@@ -72,6 +72,14 @@ describe("Game", () => {
                 const expected: RigidBody = { ...ball, velocity: velocity2s, location: location2s }
                 delete expected.impulses
                 expect(update(update(ball, 1), 1)).toEqual(expected)
+            })
+
+            it("always stays on ground level", () => {
+                let body = ball
+                for (let i = 0; i < 100; i++) {
+                    body = update(body, 1)
+                    expect(body.location.y >= 0).toBeTruthy()
+                }
             })
         })
     })
