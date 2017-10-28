@@ -22,3 +22,9 @@ export function createStore(initialState = {}): Store {
 }
 
 export const store = createStore()
+
+import { init as initPhysicsEngine } from "./game"
+import { init as initView } from "./view"
+
+initPhysicsEngine()
+initView()
