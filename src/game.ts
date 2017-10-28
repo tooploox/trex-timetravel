@@ -1,10 +1,11 @@
 import { store } from "./index"
-import * as world from '@/store/world'
+import * as world from './store/world'
 import { update, Vector, RigidBody, applyImpulse } from "./physicsEngine"
+
 const ms = 1000 / 50
 let isPaused = false
+
 export const pause = () => {
-    console.log("puase")
     isPaused = !isPaused
 }
 

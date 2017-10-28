@@ -43,6 +43,7 @@ export function init() {
             jump()
     })
     app.appendChild(canvas)
+    canvas.width = window.innerWidth
     ctx = canvas.getContext('2d')
 
     setInterval(render, 1000 / 60)
