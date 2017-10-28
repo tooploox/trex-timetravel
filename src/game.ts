@@ -1,6 +1,7 @@
 export const Vector = (x: number, y: number): Vector => ({ x, y })
-export function RigidBody(mass: number, location = Vector(0, 0), velocity = Vector(0, 0)): RigidBody {
-    return { mass, location, velocity }
+export function RigidBody(mass: number, location = Vector(0, 0), velocity = Vector(0, 0),
+    forces: Vector[] = []): RigidBody {
+    return { mass, location, velocity, forces }
 }
 const vmap = (v: Vector, f: (v: number) => number) => Vector(f(v.x), f(v.y))
 const vmapReduce = (vs: Vector[], f: (v: number) => number) => vmap(vs.reduce((l, r) => sum(l, r), Vector(0, 0)), f)
@@ -21,12 +22,9 @@ export function update(body: RigidBody, deltaTime: number): RigidBody {
     const impulses = vmapReduce(body.impulses || [], v => v / body.mass)
     const velocity = sum(body.velocity, impulses, acceleration)
     const location = sum(body.location, vmap(velocity, v => v * deltaTime))
-    if (location.y < 0)
+    if (location.y < 0) {
         location.y = 0
-    return {
-        mass: body.mass,
-        forces: body.forces,
-        velocity,
-        location
+        velocity.y = 0
     }
+    return RigidBody(body.mass, location, velocity, body.forces)
 }

@@ -74,12 +74,11 @@ describe("Game", () => {
                 expect(update(update(ball, 1), 1)).toEqual(expected)
             })
 
-            it("always stays on ground level", () => {
-                let body = ball
-                for (let i = 0; i < 100; i++) {
-                    body = update(body, 1)
-                    expect(body.location.y >= 0).toBeTruthy()
-                }
+            it("stays on a ground level when only Gravity is applied", () => {
+                const gravityForce = Vector(0, -10)
+                const ball = applyForce(RigidBody(10), gravityForce)
+                const expected: RigidBody = { ...ball, velocity: Vector(0, 0), location: Vector(0, 0) }
+                expect(update(ball, 1)).toEqual(expected)
             })
         })
     })
