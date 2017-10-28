@@ -11,10 +11,16 @@ interface Vector {
     x: number
     y: number
 }
-
+interface Jump {
+    time: number
+    location: Vector
+    velocity: Vector
+}
 interface RigidBody {
     location: Vector
     mass: number
-    force: Vector
+    forces: Vector[]
+    impulses: Vector[]
     velocity: Vector
+    jump?: Jump
 }
