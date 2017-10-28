@@ -22,7 +22,7 @@ interface IAction<TPayload> extends IActionBase {
     type: string
     payload?: TPayload
     error?: boolean
-    meta?: Object
+    meta?: Entity
 }
 
 interface ISuccess<TPayload, TSuccess> {
@@ -37,11 +37,11 @@ interface IFailure<TPayload, TError> {
 
 interface IActionCreator<TPayload> {
     type: string
-    (payload: TPayload, meta?: Object): IAction<TPayload>
+    (payload: TPayload, meta?: Entity): IAction<TPayload>
 }
 
 interface IEmptyActionCreator extends IActionCreator<undefined> {
-    (payload?: undefined, meta?: Object): IAction<undefined>;
+    (payload?: undefined, meta?: Entity): IAction<undefined>;
 }
 
 interface IAsyncActionCreators<TPayload, TSuccess, TError> {
@@ -52,17 +52,17 @@ interface IAsyncActionCreators<TPayload, TSuccess, TError> {
 }
 
 interface IActionCreatorFactory {
-    (type: string, commonMeta?: Object, error?: boolean):
+    (type: string, commonMeta?: Entity, error?: boolean):
         IEmptyActionCreator
 
-    <P>(type: string, commonMeta?: Object, isError?: boolean):
+    <P>(type: string, commonMeta?: Entity, isError?: boolean):
         IActionCreator<P>
-    <TPayload>(type: string, commonMeta?: Object, isError?: (payload: TPayload) => boolean):
+    <TPayload>(type: string, commonMeta?: Entity, isError?: (payload: TPayload) => boolean):
         IActionCreator<TPayload>
 
-    async<TPayload, TSuccess>(type: string, commonMeta?: Object):
+    async<TPayload, TSuccess>(type: string, commonMeta?: Entity):
         IAsyncActionCreators<TPayload, TSuccess, any>;
-    async<TPayload, TSuccess, TError>(type: string, commonMeta?: Object):
+    async<TPayload, TSuccess, TError>(type: string, commonMeta?: Entity):
         IAsyncActionCreators<TPayload, TSuccess, TError>;
 }
 

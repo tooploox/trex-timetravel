@@ -1,14 +1,20 @@
 ///<reference path="./physicsEngine.d.ts" />
 
-declare const enum BlockType {
-    Normal = 0,
-    CactusLarge = 1
+declare const enum EntityType {
+    Trex = 0,
+    CactusSmall = 1,
+    CactusLarge = 2
 }
 
 interface World {
-    board?: BlockType[]
-    objects?: RigidBody[]
-    trex?: RigidBody,
-    width: number
-    height: number
+    objects?: Entity[]
+    movingObjects?: Entity[]
+    trex?: RigidBody
+    // Defines max right point that blocks should be rendered for
+    maxView: Rect
+}
+
+interface Entity extends RigidBody {
+    size: Size
+    type?: EntityType
 }

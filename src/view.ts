@@ -9,28 +9,29 @@ const keycodes = {
     RESTART: [13]  // Enter
 }
 
-function drawTrex(trex: RigidBody) {
-    ctx.beginPath()
-    const size = { width: 10, height: 50 }
-    ctx.rect(trex.location.x, ctx.canvas.height - trex.location.y - size.height, size.width, size.height)
-    ctx.fillStyle = "#FF0000"
-    ctx.fill()
-    ctx.closePath()
-}
+namespace draw {
+    function rect(location: Vector, size: Size, color = "#2195f3") {
+        ctx.beginPath()
+        ctx.rect(location.x, ctx.canvas.height - location.y - size.height, size.width, size.height)
+        ctx.fillStyle = color
+        ctx.fill()
+        ctx.closePath()
+    }
 
-function drawBackground() {
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-    ctx.beginPath()
-    ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height)
-    ctx.fillStyle = "#eee"
-    ctx.fill()
-    ctx.closePath()
+    export const trex = (trex: RigidBody) =>
+        rect(trex.location, { width: 10, height: 30 })
+
+    export const ground = () =>
+        rect({ x: 0, y: 0 }, { width: ctx.canvas.width, height: 1 })
+
+    export const background = () => ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
 }
 
 function render() {
     const world = store.getState().world
-    drawBackground()
-    drawTrex(world.trex)
+    draw.background()
+    draw.ground()
+    draw.trex(world.trex)
 }
 
 export function init() {
@@ -45,6 +46,5 @@ export function init() {
     app.appendChild(canvas)
     canvas.width = window.innerWidth
     ctx = canvas.getContext('2d')
-
     setInterval(render, 1000 / 60)
 }

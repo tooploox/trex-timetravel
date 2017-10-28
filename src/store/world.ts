@@ -11,9 +11,7 @@ export namespace Trex {
 export type State = World
 
 const initialState: World = {
-    board: [],
-    width: 300,
-    height: 100
+    maxView: { x: 0, y: 0, width: 300, height: 100 }
 }
 
 export function reducer(state = initialState, action: redux.Action): State {

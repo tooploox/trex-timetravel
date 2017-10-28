@@ -23,6 +23,7 @@ export function update(body: RigidBody, deltaTime: number): RigidBody {
     const impulses = vmapReduce(body.impulses || [], v => v / body.mass)
     const velocity = sum(body.velocity, impulses, acceleration)
     const location = sum(body.location, vmap(velocity, v => v * deltaTime))
+
     if (location.y < 0) {
         location.y = 0
         velocity.y = 0
