@@ -2,7 +2,7 @@ import { Vector, RigidBody, sum, update, applyForce, applyImpulse } from './game
 
 describe("Game", () => {
     describe("Vector", () => {
-        it("creates Vecotr", () => expect(Vector(0, 1)).toEqual({ x: 0, y: 1 }))
+        it("creates a vector", () => expect(Vector(0, 1)).toEqual({ x: 0, y: 1 }))
 
         it("sums two vectors", () => expect(sum(Vector(1, 2), Vector(3, 4))).toEqual({ x: 4, y: 6 }))
 
@@ -12,7 +12,6 @@ describe("Game", () => {
     })
 
     describe("Physics", () => {
-
         it("Applies forces", () => {
             const ball = RigidBody(10)
             const f1 = Vector(1, 1)
@@ -53,5 +52,27 @@ describe("Game", () => {
                 const expected = { ...ball, velocity: Vector(1, 2), location: Vector(1, 2) }
                 expect(update(ball, 1)).toEqual(expected)
             })
+
+        describe("jump algorithm", () => {
+            const gravityForce = Vector(0, -10)
+            const jumpForce = Vector(0, 20)
+            const ball = applyImpulse(applyForce(RigidBody(10), gravityForce), jumpForce)
+            const velocity1s = Vector(0, jumpForce.y / ball.mass + gravityForce.y / ball.mass)
+            const location1s = Vector(0, ball.location.y + velocity1s.y)
+
+            it("recalculates jumping body after 1s (with 1s step)", () => {
+                const expected: RigidBody = { ...ball, velocity: velocity1s, location: location1s }
+                delete expected.impulses
+                expect(update(ball, 1)).toEqual(expected)
+            })
+
+            it("recalculates jumping body after 2s (with 1s step)", () => {
+                const velocity2s = Vector(0, velocity1s.y + gravityForce.y / ball.mass)
+                const location2s = Vector(0, location1s.y + velocity2s.y)
+                const expected: RigidBody = { ...ball, velocity: velocity2s, location: location2s }
+                delete expected.impulses
+                expect(update(update(ball, 1), 1)).toEqual(expected)
+            })
+        })
     })
 })
