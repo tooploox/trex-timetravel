@@ -1,5 +1,5 @@
 import { store } from "./index"
-import { Size, pause, jump } from "./game"
+import { pause, jump } from "./game"
 
 let ctx: CanvasRenderingContext2D
 
@@ -11,7 +11,7 @@ const keycodes = {
 
 function drawTrex(trex: RigidBody) {
     ctx.beginPath()
-    const size = Size(10, 50)
+    const size = { width: 10, height: 50 }
     ctx.rect(trex.location.x, ctx.canvas.height - trex.location.y - size.height, size.width, size.height)
     ctx.fillStyle = "#FF0000"
     ctx.fill()

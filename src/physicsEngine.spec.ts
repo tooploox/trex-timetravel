@@ -1,6 +1,6 @@
-import { Vector, RigidBody, sum, update, applyForce, applyImpulse } from './game'
+import { Vector, RigidBody, sum, update, applyForce, applyImpulse } from './physicsEngine'
 
-describe("Game", () => {
+describe("PhysicsEngine", () => {
     describe("Vector", () => {
         it("creates a vector", () => expect(Vector(0, 1)).toEqual({ x: 0, y: 1 }))
 
@@ -11,8 +11,8 @@ describe("Game", () => {
         })
     })
 
-    describe("Physics", () => {
-        it("Applies forces", () => {
+    describe("Newton laws", () => {
+        it("applies forces", () => {
             const ball = RigidBody(10)
             const f1 = Vector(1, 1)
             const f2 = Vector(2, 3)
@@ -21,7 +21,7 @@ describe("Game", () => {
             expect(actual).toEqual(expected)
         })
 
-        it("Applies impulses", () => {
+        it("applies impulses", () => {
             const ball = RigidBody(10)
             const i1 = Vector(1, 1)
             const i2 = Vector(1, 1)
@@ -31,7 +31,7 @@ describe("Game", () => {
         })
 
         // An object at rest stays at rest and an object in motion stays in motion.
-        it("Remains object at rest when no force is applyied", () => {
+        it("remains object at rest when no force is applyied", () => {
             const rock = RigidBody(100)
             const expected = { ...rock }
             expect(update(rock, 2)).toEqual(expected)
@@ -39,7 +39,7 @@ describe("Game", () => {
 
         // An object at rest stays at rest and an object in motion stays in motion
         // at a constant speed and direction unless acted upon by an unbalanced force.
-        it("Moves object when no force is applyied and object was moving", () => {
+        it("moves object when no force is applyied and object was moving", () => {
             const velocity = Vector(1, 2)
             const ball = RigidBody(10, Vector(0, 0), velocity)
             const expected = { ...ball, location: Vector(2, 4) }
