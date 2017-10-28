@@ -64,3 +64,7 @@ interface IActionCreatorFactory {
     async<TPayload, TSuccess, TError>(type: string, commonMeta?: Object):
         IAsyncActionCreators<TPayload, TSuccess, TError>;
 }
+
+type Reducer<T> = (state: T, action: { type: string }) => T
+type Casted<T, S> = {[P in keyof T]: S}
+type ReducerOf<T> = Casted<T, Reducer<any>>

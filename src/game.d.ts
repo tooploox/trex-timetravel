@@ -4,8 +4,12 @@ declare const enum BlockType {
     CactusLarge = 1
 }
 
-interface Board {
-    values: BlockType[]
+interface World {
+    board?: BlockType[]
+    objects?: RigidBody[]
+    trex?: RigidBody,
+    width: number
+    height: number
 }
 
 interface Vector {

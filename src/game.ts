@@ -1,3 +1,6 @@
+import { store } from "./index"
+import * as world from '@/store/world'
+
 export const Vector = (x: number, y: number): Vector => ({ x, y })
 export function RigidBody(mass: number, location = Vector(0, 0), velocity = Vector(0, 0),
     forces: Vector[] = []): RigidBody {
@@ -27,4 +30,10 @@ export function update(body: RigidBody, deltaTime: number): RigidBody {
         velocity.y = 0
     }
     return RigidBody(body.mass, location, velocity, body.forces)
+}
+
+export function init() {
+    const G = Vector(0, 10)
+    const trex = RigidBody(100, Vector(0, 0), Vector(0, 10), [G])
+    store.dispatch(world.Trex.init(trex))
 }

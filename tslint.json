@@ -76,10 +76,6 @@
         ],
         "trailing-comma": [
             false
-        ],
-        "interface-name": [
-            true,
-            "always-prefix"
         ]
     }
 }

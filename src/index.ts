@@ -1,25 +1,24 @@
 import * as Redux from 'redux'
-import * as app from "@/store/app"
-import { actionCreator } from "./typedActions"
-export type Store = Redux.Store<IRootState>
+import * as world from "@/store/world"
 
-export interface IRootState {
-    app: app.IState
+export type Store = Redux.Store<RootState>
+
+export interface RootState {
+    world: world.State
 }
 
-const rootReducer = Redux.combineReducers<IRootState>({ app: app.reducer })
+const reducers: ReducerOf<RootState> = {
+    world: world.reducer
+}
+
+const rootReducer = Redux.combineReducers<RootState>(reducers)
 
 declare var window: any
 const env: any = window || {}
 
 export function createStore(initialState = {}): Store {
     const comp = Redux.compose(env.devToolsExtension ? env.devToolsExtension() : (f: any) => f) as any
-    return Redux.createStore(rootReducer, initialState as IRootState, comp)
+    return Redux.createStore(rootReducer, initialState as RootState, comp)
 }
 
-const store = createStore()
-
-const someAction = actionCreator.async<number, string, string>('SOME.ACTION')
-
-store.dispatch(someAction.started(1))
-store.dispatch(someAction.done("foo"))
+export const store = createStore()
