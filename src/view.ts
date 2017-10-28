@@ -1,7 +1,13 @@
 import { store } from "./index"
-import { Size, pause } from "./game"
+import { Size, pause, jump } from "./game"
 
 let ctx: CanvasRenderingContext2D
+
+const keycodes = {
+    JUMP: [38],  // Up, spacebar
+    PAUSE: [32],  // Down
+    RESTART: [13]  // Enter
+}
 
 function drawTrex(trex: RigidBody) {
     ctx.beginPath()
@@ -30,7 +36,12 @@ function render() {
 export function init() {
     const app = document.getElementById('app')
     const canvas = document.createElement("canvas") as HTMLCanvasElement
-    document.addEventListener('keydown', e => pause())
+    document.addEventListener('keydown', e => {
+        if (keycodes.PAUSE.indexOf(e.keyCode) !== -1)
+            pause()
+        if (keycodes.JUMP.indexOf(e.keyCode) !== -1)
+            jump()
+    })
     app.appendChild(canvas)
     ctx = canvas.getContext('2d')
 
