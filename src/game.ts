@@ -19,22 +19,19 @@ function createCactus(xOffset: number) {
     }
 }
 
-function createPterodactyl(xOffset: number) {
-    return {
-        ...RigidBody(100, Vector(xOffset, 0)),
-        size: Size(46, 40),
-        shape: [
-            Rect(2, 8, 14, 14), // left
-            Rect(16, 16, 16, 30), // middle
-            Rect(32, 19, 12, 20), // right
-        ],
-        imgPos: Vector(134, 2)
-    }
+function Entity(location: Vector, size: Size, shape: Rect[], imgPos: Vector, type: EntityType): Entity {
+    return { ...RigidBody(100, location), size, shape, type, imgPos }
+}
+
+const Pterodactyl = (x: number) => {
+    const shape = [Rect(2, 8, 14, 14), Rect(16, 16, 16, 30), Rect(32, 19, 12, 20)]
+    const location = Vector(x, 0)
+    return Entity(location, Size(46, 40), shape, Vector(134, 2), EntityType.Pterodactil)
 }
 
 const OBSTACLES = [
     createCactus,
-    createPterodactyl,
+    Pterodactyl,
 ]
 
 function getRandomObstacle(xOffset: number) {

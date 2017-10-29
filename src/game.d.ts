@@ -2,8 +2,9 @@
 
 declare const enum EntityType {
     Trex = 0,
-    CactusSmall = 1,
-    CactusLarge = 2
+    Pterodactil = 1,
+    CactusSmall = 2,
+    CactusLarge = 3
 }
 
 declare const enum TrexState {
