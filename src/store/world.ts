@@ -15,7 +15,7 @@ export type State = World
 
 const initialState: World = {
     t: 0,
-    dt: 1000 / 50,
+    dt: 1000 / 10,
     maxView: { x: 0, y: 0, width: 300, height: 100 }
 }
 

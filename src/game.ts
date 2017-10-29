@@ -3,7 +3,6 @@ import * as world from './store/world'
 import * as view from './view'
 import { update, Vector, RigidBody, Size, applyImpulse } from "./physicsEngine"
 
-const ms = 1000 / 50
 let isPaused = false
 
 export const pause = () => {
@@ -11,14 +10,14 @@ export const pause = () => {
 }
 
 function recalculate() {
+    const state = store.getState().world
+    view.renderWorld(state)
     if (isPaused)
         return
-    const state = store.getState().world
     const t = state.t + state.dt
     const trex = update(state.trex, 1 / state.dt)
     store.dispatch(world.Trex.update(trex))
     store.dispatch(world.update(t))
-    view.renderWorld(state)
 }
 
 export function jump() {
@@ -30,14 +29,14 @@ export function jump() {
 }
 
 export function init() {
-    const G = Vector(0, -3000)
+    const G = Vector(0, -4000)
     const trex: Entity = {
-        ...RigidBody(12, Vector(0, 0), Vector(10, 0), [G]),
+        ...RigidBody(20, Vector(0, 0), Vector(100, 0), [G]),
         size: Size(4, 4.272)
     }
 
     store.dispatch(world.Trex.init(trex))
     view.init()
-    setInterval(recalculate, ms)
+    setInterval(recalculate, 1000 / store.getState().world.dt)
 }
 

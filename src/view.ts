@@ -14,7 +14,7 @@ export namespace draw {
     }
 
     export const ground = (ctx: Context) =>
-        rect(ctx, { x: 0, y: 0 }, { width: ctx.canvas.width, height: 1 })
+        rect(ctx, { x: 0, y: 1 }, { width: ctx.canvas.width, height: 1 })
 
     export const background = (ctx: Context) =>
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
@@ -60,12 +60,14 @@ class CanvasView implements View {
 
     render(world: World) {
         draw.background(this.ctx)
-        draw.ground(this.ctx)
         const w = 44
-        const dtPerFrame = 7
-        const offset = Math.floor((Math.floor(world.t / world.dt) % (2 * dtPerFrame)) / dtPerFrame)
+        const dtPerFrame = 12
+        const offset = world.trex.location.y > 0 ? 0 :
+            Math.floor((Math.floor(world.t / world.dt) % (2 * dtPerFrame)) / dtPerFrame)
         const source = { ...Vector(936 + offset * w, 2), ...Size(44, 47) }
         draw.image(this.ctx, this.image, world.trex.location, source)
+        draw.ground(this.ctx)
+
         //draw.collisionBox(this.ctx, { ...source, ...world.trex.location })
     }
 }
