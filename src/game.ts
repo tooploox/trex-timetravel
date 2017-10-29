@@ -58,7 +58,7 @@ export function init() {
     const G = Vector(0, -9810)
 
     const trex: Trex = {
-        ...RigidBody(10, Vector(0, 0), Vector(130, 0), [G]),
+        ...RigidBody(10, Vector(0, 0), Vector(150, 0), [G]),
         size: Size(44, 47),
         shape: [
             Rect(11, 15, 17, 26), // body
@@ -67,7 +67,7 @@ export function init() {
             Rect(14, 20, 20, 4) // hand
         ]
     }
-    store.dispatch(world.Trex.init(trex))
+    store.dispatch(world.Trex.update(trex))
     view.init()
     setInterval(recalculate, 1000 / store.getState().world.dt)
 }

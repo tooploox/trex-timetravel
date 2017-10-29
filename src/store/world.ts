@@ -5,7 +5,6 @@ const actionCreator = actionCreatorFactory('world')
 
 export namespace Trex {
     const actionCreator = actionCreatorFactory('world.trex')
-    export const init = actionCreator<Trex>('init')
     export const update = actionCreator<Trex>('update')
     export const jump = actionCreator<Trex>('jump')
 }
@@ -25,7 +24,7 @@ const initialState: World = {
 export function reducer(state = initialState, action: redux.Action): State {
     if (eq(action, Trex.jump))
         return { ...state, trex: { ...action.payload, jumpT: state.t } }
-    if (eq(action, Trex.init) || eq(action, Trex.update))
+    if (eq(action, Trex.update))
         return { ...state, trex: action.payload }
     if (eq(action, update))
         return { ...state, t: action.payload }
