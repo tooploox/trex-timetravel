@@ -26,6 +26,7 @@ interface Entity extends RigidBody {
     size: Size
     type?: EntityType
     shape: Rect[]
+    imgPos?: Vector
 }
 
 interface Trex extends Entity {

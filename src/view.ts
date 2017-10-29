@@ -47,7 +47,7 @@ class CanvasView implements View {
 
     renderObjects(world: World) {
         world.objects.forEach(obj => {
-            const source = { ...Vector(332, 2), ...obj.size }
+            const source = { ...obj.imgPos, ...obj.size }
             const location = sum(obj.location, this.frame)
             draw.image(this.ctx, this.image, location, source)
             draw.shape(this.ctx, { ...obj, location }, '#0f0')
