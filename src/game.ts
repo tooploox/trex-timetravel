@@ -6,6 +6,44 @@ import { update, Vector, RigidBody, Size, applyImpulse, Rect, sum } from "./phys
 let isPaused = false
 export const pause = () => isPaused = !isPaused
 
+function createCactus(xOffset: number) {
+    return {
+        ...RigidBody(100, Vector(xOffset, 0)),
+        size: Size(25, 50),
+        shape: [
+            Rect(0, 12, 9, 32), // left
+            Rect(9, 0, 7, 46), // middle
+            Rect(19, 11, 5, 20), // right
+        ],
+        imgPos: Vector(332, 2)
+    }
+}
+
+function createPterodactyl(xOffset: number) {
+    return {
+        ...RigidBody(100, Vector(xOffset, 0)),
+        size: Size(46, 40),
+        shape: [
+            Rect(2, 8, 14, 14), // left
+            Rect(16, 16, 16, 30), // middle
+            Rect(32, 19, 12, 20), // right
+        ],
+        imgPos: Vector(134, 2)
+    }
+}
+
+const OBSTACLES = [
+    createCactus,
+    createPterodactyl,
+]
+
+function getRandomObstacle(xOffset: number) {
+    let obstacleCreator = OBSTACLES[
+        Math.floor((Math.random() * OBSTACLES.length))
+    ]
+    return obstacleCreator(xOffset)
+}
+
 function recalculate() {
     const state = store.getState().world
     const { trex } = state
@@ -53,15 +91,7 @@ function getStaticObjects(xOffset: number, minDistance: number) {
     for (let i = 0; objects.length < 4; i++) {
         if (Math.random() * 1000 % 200 >= 1)
             continue
-        const object = {
-            ...RigidBody(100, Vector(xOffset + i, 0)),
-            size: Size(25, 50),
-            shape: [
-                Rect(0, 12, 9, 32), // left
-                Rect(9, 0, 7, 46), // middle
-                Rect(19, 11, 5, 20), // right
-            ]
-        }
+        const object = getRandomObstacle(xOffset + i);
         i += minDistance * 1.5 || object.size.width * 8
         objects.push(object)
     }
