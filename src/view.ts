@@ -1,7 +1,6 @@
 import { pause, jump } from "./game"
 import { Vector, sum } from "./physicsEngine"
 import { mirrorH } from './projection'
-import * as world from '@/store/world'
 
 export namespace draw {
     type Context = CanvasRenderingContext2D

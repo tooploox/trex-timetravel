@@ -16,12 +16,12 @@ interface World {
     maxView: Rect
 }
 
-interface Trex extends RigidBody {
+interface Entity extends RigidBody {
     size: Size
     type?: EntityType
     shape: Rect[]
 }
 
-interface Trex extends Trex {
+interface Trex extends Entity {
     jumpT?: number
 }
