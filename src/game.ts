@@ -21,17 +21,24 @@ function recalculate() {
 }
 
 export function jump() {
-    const trex = store.getState().world.trex
+    const state = store.getState().world
+    const trex = state.trex
+    // jump acceleration
+    if (state.t - trex.jumpT < state.dt * 20) {
+        const newTrex = applyImpulse(trex, Vector(0, 380))
+        store.dispatch(world.Trex.update(newTrex))
+        return
+    }
     if (trex.location.y !== 0)
         return
-    const newTrex = applyImpulse(trex, Vector(0, 3000))
+    const newTrex = applyImpulse(trex, Vector(0, 1800))
     store.dispatch(world.Trex.jump(newTrex))
 }
 
 export function init() {
     const G = Vector(0, -4000)
     const trex: Entity = {
-        ...RigidBody(20, Vector(0, 0), Vector(100, 0), [G]),
+        ...RigidBody(5, Vector(0, 0), Vector(90, 0), [G]),
         size: Size(4, 4.272)
     }
 

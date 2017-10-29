@@ -2,6 +2,7 @@ import * as redux from 'redux'
 import { eq, actionCreatorFactory } from "@/typedActions"
 
 const actionCreator = actionCreatorFactory('world')
+
 export namespace Trex {
     const actionCreator = actionCreatorFactory('world.trex')
     export const init = actionCreator<Entity>('init')
@@ -20,7 +21,9 @@ const initialState: World = {
 }
 
 export function reducer(state = initialState, action: redux.Action): State {
-    if (eq(action, Trex.init) || eq(action, Trex.update) || eq(action, Trex.jump))
+    if (eq(action, Trex.jump))
+        return { ...state, trex: { ...action.payload, jumpT: state.t } }
+    if (eq(action, Trex.init) || eq(action, Trex.update))
         return { ...state, trex: action.payload }
     if (eq(action, update))
         return { ...state, t: action.payload }

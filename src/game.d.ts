@@ -11,7 +11,7 @@ interface World {
     t: number
     objects?: Entity[]
     movingObjects?: Entity[]
-    trex?: Entity
+    trex?: Trex
     // Defines max right point that blocks should be rendered for
     maxView: Rect
 }
@@ -19,4 +19,8 @@ interface World {
 interface Entity extends RigidBody {
     size: Size
     type?: EntityType
+}
+
+interface Trex extends Entity {
+    jumpT?: number
 }
