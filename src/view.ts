@@ -1,20 +1,10 @@
 import { pause, jump } from "./game"
-import { Vector, sum } from "./physicsEngine"
+import { Vector, Size, sum } from "./physicsEngine"
 import { mirrorH } from './projection'
 
 export namespace draw {
     type Context = CanvasRenderingContext2D
     type Image = HTMLImageElement
-    function rect(ctx: Context, location: Vector, size: Size, color = "#535353") {
-        ctx.beginPath()
-        ctx.rect(location.x, ctx.canvas.height - location.y - size.height, size.width, size.height)
-        ctx.fillStyle = color
-        ctx.fill()
-        ctx.closePath()
-    }
-
-    export const ground = (ctx: Context) =>
-        rect(ctx, { x: 0, y: 1 }, { width: ctx.canvas.width, height: 1 })
 
     export const background = (ctx: Context) =>
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
@@ -83,13 +73,22 @@ class CanvasView implements View {
         //draw.shape(this.ctx, { ...world.trex as Entity, location })
     }
 
+    renderBg(world: World) {
+        const size = Size(1190, 20)
+        const x = world.trex.location.x
+        const i = Math.floor(x / size.width)
+        const source = { ...Vector(0, 51), ...Size(1200, 20) }
+        draw.image(this.ctx, this.image, Vector(i * size.width - x, 0), source)
+        draw.image(this.ctx, this.image, Vector((i + 1) * size.width - x, 0), source)
+    }
+
     render(world: World) {
         this.frame = { ...this.frame, x: -world.trex.location.x + 100 }
 
         draw.background(this.ctx)
         this.renderObjects(world)
         this.renderTrex(world)
-        draw.ground(this.ctx)
+        this.renderBg(world)
     }
 }
 

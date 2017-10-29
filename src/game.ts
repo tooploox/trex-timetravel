@@ -4,10 +4,7 @@ import * as view from './view'
 import { update, Vector, RigidBody, Size, applyImpulse, Rect, sum } from "./physicsEngine"
 
 let isPaused = false
-
-export const pause = () => {
-    isPaused = !isPaused
-}
+export const pause = () => isPaused = !isPaused
 
 function recalculate() {
     const state = store.getState().world
@@ -18,24 +15,26 @@ function recalculate() {
     const lastX = state.objects.length === 0 ? 300 : state.objects[state.objects.length - 1].location.x
     const maxW = window.innerWidth
 
-    if (state.trex.location.x + maxW > lastX)
-        store.dispatch(world.addStaticObjects(getStaticObjects(lastX + state.trex.velocity.x, state.trex.velocity.x)))
-
-    const t = state.t + state.dt
-    let newTrex = update(state.trex, 1 / state.dt)
-    if (state.t > trex.nextSpeedUpT) {
-        newTrex = {
-            ...newTrex,
-            velocity: sum(newTrex.velocity, Vector(1, 0)),
-            nextSpeedUpT: trex.nextSpeedUpT * 1.1
-        }
+    if (state.trex.location.x + maxW > lastX) {
+        const minDistance = state.trex.velocity.x
+        const minX = lastX + minDistance
+        store.dispatch(world.addStaticObjects(getStaticObjects(minX, minDistance)))
     }
+
+    let newTrex = update(state.trex, 1 / state.dt)
+
+    if (state.t > trex.nextSpeedUpT) {
+        const nextSpeedUpT = trex.nextSpeedUpT * 1.2
+        const velocity = sum(newTrex.velocity, Vector(1, 0))
+        newTrex = { ...newTrex, velocity, nextSpeedUpT }
+    }
+
     if (newTrex.state === TrexState.Jumping && newTrex.location.y === 0) {
         const jumpDistance = newTrex.location.x - newTrex.jumpStartX
         newTrex = { ...newTrex, state: TrexState.Running, jumpDistance }
     }
+
     store.dispatch(world.Trex.update(newTrex))
-    store.dispatch(world.update(t))
 }
 
 export function jump() {
@@ -50,7 +49,6 @@ export function jump() {
 }
 
 function getStaticObjects(xOffset: number, minDistance: number) {
-    console.log("getStaticObjects", xOffset, minDistance)
     const objects: Entity[] = []
     for (let i = 0; objects.length < 4; i++) {
         if (Math.random() * 1000 % 200 >= 1)

@@ -9,7 +9,6 @@ export namespace Trex {
     export const jump = actionCreator<Trex>('jump')
 }
 
-export const update = actionCreator<number>('update')
 export const addStaticObjects = actionCreator<Entity[]>('addStaticObjects')
 
 export type State = World
@@ -27,9 +26,7 @@ export function reducer(state = initialState, action: redux.Action): State {
         return { ...state, trex }
     }
     if (eq(action, Trex.update))
-        return { ...state, trex: action.payload }
-    if (eq(action, update))
-        return { ...state, t: action.payload }
+        return { ...state, trex: action.payload, t: state.t + state.dt }
     if (eq(action, addStaticObjects))
         return { ...state, objects: [...state.objects, ...action.payload] }
     return state
