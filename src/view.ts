@@ -1,6 +1,6 @@
 import { store } from "./index"
 import { pause, jump } from "./game"
-
+import { Vector, Size } from "./physicsEngine"
 namespace draw {
     function rect(ctx: CanvasRenderingContext2D, location: Vector, size: Size, color = "#2195f3") {
         ctx.beginPath()
@@ -21,24 +21,44 @@ namespace draw {
 }
 
 interface View {
+    frame: Rect
     render: (world: World) => void
+}
+
+class Camera {
+    worldFrame: Rect
+    frame: Rect
 }
 
 class CanvasView implements View {
     private ctx: CanvasRenderingContext2D
-
+    frame: Rect
+    image: HTMLImageElement
     constructor() {
+        this.image = new Image(60, 45)   // using optional size for image
+        this.image.src =
+            'https://github.com/wayou/t-rex-runner/raw/gh-pages/assets/default_100_percent/100-offline-sprite.png'
+
         const app = document.getElementById('app')
         const canvas = document.createElement("canvas") as HTMLCanvasElement
         app.appendChild(canvas)
         canvas.width = window.innerWidth
         this.ctx = canvas.getContext('2d')
+        this.frame = { x: 0, y: 0, width: 30, height: 10 }
     }
 
     render(world: World) {
         draw.background(this.ctx)
         draw.ground(this.ctx)
-        draw.trex(this.ctx, world.trex)
+        //draw.trex(this.ctx, world.trex)
+
+        const source = { ...Vector(848, 2), ...Size(44, 47) }
+        this.ctx.save()
+        this.ctx.drawImage(this.image,
+            source.x, source.y, source.width, source.height,
+            world.trex.location.x - source.width / 2, this.ctx.canvas.height - world.trex.location.y - source.height,
+            source.width, source.height)
+        this.ctx.restore()
     }
 }
 
