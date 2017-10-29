@@ -30,11 +30,6 @@ interface View {
     render: (world: World) => void
 }
 
-class Camera {
-    worldFrame: Rect
-    frame: Rect
-}
-
 class CanvasView implements View {
     private ctx: CanvasRenderingContext2D
     frame: Rect
