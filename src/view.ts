@@ -1,6 +1,7 @@
 import { pause, jump } from "./game"
-import { Vector } from "./physicsEngine"
+import { Vector, sum } from "./physicsEngine"
 import { mirrorH } from './projection'
+import * as world from '@/store/world'
 
 export namespace draw {
     type Context = CanvasRenderingContext2D
@@ -27,7 +28,7 @@ export namespace draw {
         )
     }
 
-    export function shape(ctx: Context, obj: Entity, strokeStyle = '#f00') {
+    export function shape(ctx: Context, obj: Trex, strokeStyle = '#f00') {
         ctx.save()
         ctx.strokeStyle = strokeStyle
         const { shape, location, size } = obj
@@ -47,6 +48,7 @@ class CanvasView implements View {
     private ctx: CanvasRenderingContext2D
     frame: Rect
     image: HTMLImageElement
+
     constructor() {
         this.image = new Image()
         this.image.src =
@@ -57,29 +59,34 @@ class CanvasView implements View {
         app.appendChild(canvas)
         canvas.width = window.innerWidth
         this.ctx = canvas.getContext('2d')
-        this.frame = { x: 0, y: 0, width: 30, height: 10 }
+        this.frame = { x: 0, y: 0, width: canvas.width, height: canvas.height }
     }
 
     renderObjects(world: World) {
         world.objects.forEach(obj => {
             const source = { ...Vector(332, 2), ...obj.size }
-            draw.image(this.ctx, this.image, obj.location, source)
-            draw.shape(this.ctx, obj, '#0f0')
+            const location = sum(obj.location, this.frame)
+            draw.image(this.ctx, this.image, location, source)
+            //  draw.shape(this.ctx, { ...obj, location }, '#0f0')
         })
     }
+
     private getTrexFrame(world: World) {
         const { trex, t, dt } = world
-        const dtPerFrame = 12
-        const offset = trex.location.y > 0 ? -1 : Math.floor((Math.floor(t / dt) % (2 * dtPerFrame)) / dtPerFrame)
-        return { ...Vector(936 + offset * trex.size.width, 2), ...trex.size }
+        const dtPerFrame = 14
+        const frameOffset = trex.location.y > 0 ? -2 : Math.floor(t / dt % (2 * dtPerFrame) / dtPerFrame)
+        return { ...Vector(936 + frameOffset * trex.size.width, 2), ...trex.size }
     }
 
     renderTrex(world: World) {
-        draw.image(this.ctx, this.image, world.trex.location, this.getTrexFrame(world))
-        draw.shape(this.ctx, world.trex)
+        const location = sum(world.trex.location, this.frame)
+        draw.image(this.ctx, this.image, location, this.getTrexFrame(world))
+        //draw.shape(this.ctx, { ...world.trex as Entity, location })
     }
 
     render(world: World) {
+        this.frame = { ...this.frame, x: -world.trex.location.x + 100 }
+
         draw.background(this.ctx)
         this.renderObjects(world)
         this.renderTrex(world)
@@ -94,10 +101,10 @@ function initKeyboard() {
         RESTART: [13]  // Enter
     }
 
-    document.addEventListener('keydown', e => {
-        if (keycodes.PAUSE.indexOf(e.keyCode) !== -1)
+    document.addEventListener('keydown', ({ keyCode }) => {
+        if (keycodes.PAUSE.indexOf(keyCode) !== -1)
             pause()
-        else if (keycodes.JUMP.indexOf(e.keyCode) !== -1)
+        else if (keycodes.JUMP.indexOf(keyCode) !== -1)
             jump()
     })
 }

@@ -9,19 +9,19 @@ declare const enum EntityType {
 interface World {
     dt: number
     t: number
-    objects?: Entity[]
-    movingObjects?: Entity[]
+    objects?: Trex[]
+    movingObjects?: Trex[]
     trex?: Trex
     // Defines max right point that blocks should be rendered for
     maxView: Rect
 }
 
-interface Entity extends RigidBody {
+interface Trex extends RigidBody {
     size: Size
     type?: EntityType
     shape: Rect[]
 }
 
-interface Trex extends Entity {
+interface Trex extends Trex {
     jumpT?: number
 }

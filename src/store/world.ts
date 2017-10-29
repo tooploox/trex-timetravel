@@ -5,13 +5,13 @@ const actionCreator = actionCreatorFactory('world')
 
 export namespace Trex {
     const actionCreator = actionCreatorFactory('world.trex')
-    export const init = actionCreator<Entity>('init')
-    export const update = actionCreator<Entity>('update')
-    export const jump = actionCreator<Entity>('jump')
+    export const init = actionCreator<Trex>('init')
+    export const update = actionCreator<Trex>('update')
+    export const jump = actionCreator<Trex>('jump')
 }
 
 export const update = actionCreator<number>('update')
-export const addStaticObjects = actionCreator<Entity[]>('addStaticObjects')
+export const addStaticObjects = actionCreator<Trex[]>('addStaticObjects')
 
 export type State = World
 

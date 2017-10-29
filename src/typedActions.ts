@@ -12,11 +12,11 @@ export function actionCreatorFactory(prefix?: string,
     const base = prefix ? prefix + '.' : ''
     const actionCreator = <P = void>(
         type: string,
-        commonMeta?: Entity,
+        commonMeta?: Trex,
         isError: ((payload: P) => boolean) | boolean = defaultIsError) => {
         const fullType = base + type
 
-        return (Object as any).assign((payload: P, meta?: Entity) => {
+        return (Object as any).assign((payload: P, meta?: Trex) => {
             const action: IAction<P> = {
                 type: fullType,
                 payload
@@ -32,7 +32,7 @@ export function actionCreatorFactory(prefix?: string,
         }, { type: fullType }) as IActionCreator<P>
     }
 
-    const asyncActionCreators = <TPayload, TSuccess, TError>(type: string, commonMeta?: Entity) => {
+    const asyncActionCreators = <TPayload, TSuccess, TError>(type: string, commonMeta?: Trex) => {
         return {
             type: base + type,
             started: actionCreator<TPayload>(`${type}.STARTED`, commonMeta, false),
