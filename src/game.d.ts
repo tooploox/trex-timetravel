@@ -6,11 +6,17 @@ declare const enum EntityType {
     CactusLarge = 2
 }
 
+declare const enum TrexState {
+    Running = 0,
+    Jumping = 1,
+    Ducking = 2
+}
+
 interface World {
     dt: number
     t: number
-    objects?: Trex[]
-    movingObjects?: Trex[]
+    objects?: Entity[]
+    movingObjects?: Entity[]
     trex?: Trex
     // Defines max right point that blocks should be rendered for
     maxView: Rect
@@ -23,5 +29,11 @@ interface Entity extends RigidBody {
 }
 
 interface Trex extends Entity {
-    jumpT?: number
+    state: TrexState
+
+    jumpStartT?: number
+    jumpStartX?: number
+    jumpDistance?: number,
+
+    nextSpeedUpT: number
 }

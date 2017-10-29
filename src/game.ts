@@ -11,34 +11,48 @@ export const pause = () => {
 
 function recalculate() {
     const state = store.getState().world
+    const { trex } = state
     view.renderWorld(state)
     if (isPaused)
         return
     const lastX = state.objects.length === 0 ? 300 : state.objects[state.objects.length - 1].location.x
     const maxW = window.innerWidth
+
     if (state.trex.location.x + maxW > lastX)
-        store.dispatch(world.addStaticObjects(getObjects(lastX + 300)))
+        store.dispatch(world.addStaticObjects(getStaticObjects(lastX + state.trex.velocity.x, state.trex.velocity.x)))
 
     const t = state.t + state.dt
-    let trex = update(state.trex, 1 / state.dt)
-    if (state.t % 1000 === 0)
-        trex = { ...trex, velocity: sum(trex.velocity, Vector(1, 0)) }
-    store.dispatch(world.Trex.update(trex))
+    let newTrex = update(state.trex, 1 / state.dt)
+    if (state.t > trex.nextSpeedUpT) {
+        newTrex = {
+            ...newTrex,
+            velocity: sum(newTrex.velocity, Vector(1, 0)),
+            nextSpeedUpT: trex.nextSpeedUpT * 1.1
+        }
+    }
+    if (newTrex.state === TrexState.Jumping && newTrex.location.y === 0) {
+        const jumpDistance = newTrex.location.x - newTrex.jumpStartX
+        newTrex = { ...newTrex, state: TrexState.Running, jumpDistance }
+    }
+    store.dispatch(world.Trex.update(newTrex))
     store.dispatch(world.update(t))
 }
 
 export function jump() {
     const state = store.getState().world
     const trex = state.trex
-    if (state.t - trex.jumpT < state.dt * 20)
+    if (state.t - trex.jumpStartT < state.dt * 20)
         store.dispatch(world.Trex.update(applyImpulse(trex, Vector(0, 800))))
-    else if (trex.location.y === 0)
-        store.dispatch(world.Trex.jump(applyImpulse(trex, Vector(0, 4000))))
+    else if (trex.location.y === 0) {
+        const newTrex = { ...applyImpulse(trex, Vector(0, 4000)), state: TrexState.Jumping }
+        store.dispatch(world.Trex.jump(newTrex))
+    }
 }
 
-function getObjects(xOffset: number) {
-    const objects: Trex[] = []
-    for (let i = 0; i < window.innerWidth; i++) {
+function getStaticObjects(xOffset: number, minDistance: number) {
+    console.log("getStaticObjects", xOffset, minDistance)
+    const objects: Entity[] = []
+    for (let i = 0; objects.length < 4; i++) {
         if (Math.random() * 1000 % 200 >= 1)
             continue
         const object = {
@@ -50,7 +64,7 @@ function getObjects(xOffset: number) {
                 Rect(19, 11, 5, 20), // right
             ]
         }
-        i += object.size.width * 6
+        i += minDistance * 1.5 || object.size.width * 8
         objects.push(object)
     }
     return objects
@@ -60,8 +74,10 @@ export function init() {
     const G = Vector(0, -9810)
 
     const trex: Trex = {
-        ...RigidBody(10, Vector(0, 0), Vector(150, 0), [G]),
+        ...RigidBody(10, Vector(0, 0), Vector(250, 0), [G]),
         size: Size(44, 47),
+        state: TrexState.Running,
+        nextSpeedUpT: 1000,
         shape: [
             Rect(11, 15, 17, 26), // body
             Rect(2, 17, 9, 18), // tail
