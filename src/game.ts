@@ -18,7 +18,7 @@ function recalculate() {
 }
 
 export function init() {
-    const G = Vector(0, -2000)
+    const G = Vector(0, -3000)
     const trex = RigidBody(12, Vector(0, 0), Vector(10, 0), [G])
     store.dispatch(world.Trex.init(trex))
     setInterval(recalculate, ms)
@@ -28,6 +28,6 @@ export function jump() {
     const trex = store.getState().world.trex
     if (trex.location.y !== 0)
         return
-    const newTrex = applyImpulse(trex, Vector(0, 2000))
+    const newTrex = applyImpulse(trex, Vector(0, 3000))
     store.dispatch(world.Trex.jump(newTrex))
 }
