@@ -67,4 +67,3 @@ export function init() {
     view.init()
     setInterval(recalculate, 1000 / store.getState().world.dt)
 }
-
