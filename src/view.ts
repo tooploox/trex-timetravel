@@ -42,22 +42,30 @@ class CanvasView implements View {
     }
 }
 
-const keycodes = {
-    JUMP: [38],  // Up, spacebar
-    PAUSE: [32],  // Down
-    RESTART: [13]  // Enter
-}
+function initKeyboard() {
+    const keycodes = {
+        JUMP: [38],  // Up
+        PAUSE: [32],  // spacebar
+        RESTART: [13]  // Enter
+    }
 
-export function init() {
-    const views: View[] = [new CanvasView(), new CanvasView(), new CanvasView()]
     document.addEventListener('keydown', e => {
         if (keycodes.PAUSE.indexOf(e.keyCode) !== -1)
             pause()
         else if (keycodes.JUMP.indexOf(e.keyCode) !== -1)
             jump()
     })
-    setInterval(() => {
-        const world = store.getState().world
-        views.forEach(v => v.render(world))
-    }, 1000 / 60)
+}
+
+let views: View[]
+
+const renderWorld = () => {
+    const world = store.getState().world
+    views.forEach(v => v.render(world))
+}
+
+export function init() {
+    views = [new CanvasView(), new CanvasView(), new CanvasView()]
+    initKeyboard()
+    setInterval(renderWorld, 1000 / 60)
 }
