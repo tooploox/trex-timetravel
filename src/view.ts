@@ -67,15 +67,15 @@ class CanvasView implements View {
             draw.shape(this.ctx, obj, '#0f0')
         })
     }
+    private getTrexFrame(world: World) {
+        const { trex, t, dt } = world
+        const dtPerFrame = 12
+        const offset = trex.location.y > 0 ? -1 : Math.floor((Math.floor(t / dt) % (2 * dtPerFrame)) / dtPerFrame)
+        return { ...Vector(936 + offset * trex.size.width, 2), ...trex.size }
+    }
 
     renderTrex(world: World) {
-        const { trex, t, dt } = world
-        const w = 44
-        const dtPerFrame = 12
-        const offset = trex.location.y > 0 ? 0 :
-            Math.floor((Math.floor(t / dt) % (2 * dtPerFrame)) / dtPerFrame)
-        const source = { ...Vector(936 + offset * w, 2), ...trex.size }
-        draw.image(this.ctx, this.image, trex.location, source)
+        draw.image(this.ctx, this.image, world.trex.location, this.getTrexFrame(world))
         draw.shape(this.ctx, world.trex)
     }
 
