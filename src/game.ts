@@ -1,15 +1,15 @@
 import { store } from "./index"
 import * as world from './store/world'
 import * as view from './view'
-import { update as recalculate, Vector, RigidBody, Size, applyImpulse, Rect, sum } from "./physicsEngine"
+import { update as recalculate, Vector, RigidBody, Size, applyImpulse, Rect, sum } from './physicsEngine'
 
 const randomNumber = (max: number) => Math.floor(Math.random() * 100000 % max)
 
 let isPaused = false
 export const pause = () => isPaused = !isPaused
 
-function Entity(location: Vector, size: Size, shape: Rect[], imgPos: Vector, type: EntityType): Entity {
-    return { ...RigidBody(100, location), size, shape, type, imgPos }
+function Entity(body: RigidBody, size: Size, shape: Rect[], imgPos: Vector, type: EntityType): Entity {
+    return { ...body, size, shape, type, imgPos }
 }
 
 export namespace Trex {
@@ -55,10 +55,10 @@ export namespace Trex {
     export const init = () => {
         const G = Vector(0, -9810)
         const shape = [Rect(11, 15, 17, 26), Rect(2, 17, 9, 18), Rect(20, 1, 22, 15), Rect(14, 20, 20, 4)]
-        const entity = Entity(Vector(0, 0), Size(44, 47), shape, Vector(936, 2), EntityType.Trex)
-        const velocity = Vector(250, 0)
+        const body = RigidBody(10, Vector(0, 0), Vector(250, 0), [G])
+        const entity = Entity(body, Size(44, 47), shape, Vector(936, 2), EntityType.Trex)
         const trex: Trex = {
-            ...entity, mass: 10, velocity, forces: [G],
+            ...entity,
             state: TrexState.Running,
             nextSpeedUpT: 1000,
             duckingImgPos: Vector(1112, 19),
@@ -71,14 +71,15 @@ export namespace Trex {
 
 namespace Objects {
     const Cactus = (x: number) => {
-        const shape = [Rect(0, 12, 9, 32), Rect(9, 0, 7, 46), Rect(19, 11, 5, 20)]
-        return Entity(Vector(x, 0), Size(25, 50), shape, Vector(332, 2), EntityType.CactusLarge)
+        const shape = [Rect(0, 12, 9, 22), Rect(9, 0, 7, 46), Rect(19, 11, 5, 20)]
+        const body = RigidBody(100, Vector(x, 0))
+        return Entity(body, Size(25, 50), shape, Vector(332, 2), EntityType.CactusLarge)
     }
 
     const Pterodactyl = (x: number) => {
-        const shape = [Rect(2, 8, 14, 14), Rect(16, 16, 16, 30), Rect(32, 19, 12, 20)]
-        const location = Vector(x, 0)
-        return Entity(location, Size(46, 40), shape, Vector(134, 2), EntityType.Pterodactyl)
+        const shape = [Rect(2, 8, 14, 14), Rect(16, 16, 16, 12), Rect(32, 19, 12, 10)]
+        const body = RigidBody(10, Vector(x, randomNumber(100)), Vector(-80 - randomNumber(50), 0))
+        return Entity(body, Size(46, 40), shape, Vector(134, 2), EntityType.Pterodactyl)
     }
 
     const obstacles = [Cactus, Pterodactyl]
@@ -99,12 +100,16 @@ namespace Objects {
     export function update(state: World) {
         const lastX = state.objects.length === 0 ? 300 : state.objects[state.objects.length - 1].location.x
         const maxW = window.innerWidth
-
+        const objects = state.objects
+            .filter(o => o.location.x + maxW * .2 > state.trex.location.x)
+            .map(o => o.type === EntityType.Pterodactyl ? recalculate(o, 1 / state.dt) : o)
+        store.dispatch(world.updateObjects(objects))
         if (state.trex.location.x + maxW > lastX) {
             const minDistance = state.trex.velocity.x
             const minX = lastX + minDistance
-            store.dispatch(world.addStaticObjects(get(minX, minDistance)))
+            store.dispatch(world.addObjects(get(minX, minDistance)))
         }
+
     }
 }
 

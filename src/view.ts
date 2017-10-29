@@ -44,13 +44,21 @@ class CanvasView implements View {
         this.ctx = canvas.getContext('2d')
         this.frame = { x: 0, y: 0, width: canvas.width, height: canvas.height }
     }
+    private getPterodactylFrame(world: World, obj: Entity) {
+        const { t, dt } = world
+        const { size, imgPos } = obj
+        const dtPerFrame = Math.floor(obj.velocity.x / -8)
+        const frameOffset = Math.floor(t / dt % (2 * dtPerFrame) / dtPerFrame)
+        return { ...Vector(imgPos.x + frameOffset * size.width, imgPos.y), ...size }
+    }
 
     renderObjects(world: World) {
         world.objects.forEach(obj => {
-            const source = { ...obj.imgPos, ...obj.size }
+            const source = obj.type === EntityType.Pterodactyl ?
+                this.getPterodactylFrame(world, obj) : { ...obj.imgPos, ...obj.size }
             const location = sum(obj.location, this.frame)
             draw.image(this.ctx, this.image, location, source)
-            //  draw.shape(this.ctx, { ...obj, location }, '#0f0')
+            //draw.shape(this.ctx, { ...obj, location }, '#0f0')
         })
     }
 
