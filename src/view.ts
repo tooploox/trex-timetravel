@@ -1,4 +1,4 @@
-import { pause, jump } from "./game"
+import { pause, jump, duck, run } from "./game"
 import { Vector, Size, sum } from "./physicsEngine"
 import { mirrorH } from './projection'
 
@@ -50,21 +50,24 @@ class CanvasView implements View {
             const source = { ...obj.imgPos, ...obj.size }
             const location = sum(obj.location, this.frame)
             draw.image(this.ctx, this.image, location, source)
-            draw.shape(this.ctx, { ...obj, location }, '#0f0')
+            //  draw.shape(this.ctx, { ...obj, location }, '#0f0')
         })
     }
 
     private getTrexFrame(world: World) {
         const { trex, t, dt } = world
         const dtPerFrame = 14
-        const frameOffset = trex.location.y > 0 ? -2 : Math.floor(t / dt % (2 * dtPerFrame) / dtPerFrame)
-        return { ...Vector(trex.imgPos.x + frameOffset * trex.size.width, trex.imgPos.y), ...trex.size }
+        const frameOffset = trex.state === TrexState.Jumping ? -2 : Math.floor(t / dt % (2 * dtPerFrame) / dtPerFrame)
+        const isDucking = trex.state === TrexState.Ducking
+        const size = isDucking ? trex.duckingSize : trex.size
+        const imgPos = isDucking ? trex.duckingImgPos : trex.imgPos
+        return { ...Vector(imgPos.x + frameOffset * size.width, imgPos.y), ...size }
     }
 
     renderTrex(world: World) {
         const location = sum(world.trex.location, this.frame)
         draw.image(this.ctx, this.image, location, this.getTrexFrame(world))
-        draw.shape(this.ctx, { ...world.trex as Entity, location })
+        //draw.shape(this.ctx, { ...world.trex as Entity, location })
     }
 
     renderBg(world: World) {
@@ -90,14 +93,21 @@ function initKeyboard() {
     const keycodes = {
         JUMP: [38],  // Up
         PAUSE: [32],  // spacebar
-        RESTART: [13]  // Enter
+        RESTART: [13],  // Enter
+        DUCK: [40]
     }
 
     document.addEventListener('keydown', ({ keyCode }) => {
         if (keycodes.PAUSE.indexOf(keyCode) !== -1)
             pause()
+        else if (keycodes.DUCK.indexOf(keyCode) !== -1)
+            duck()
         else if (keycodes.JUMP.indexOf(keyCode) !== -1)
             jump()
+    })
+    document.addEventListener('keyup', ({ keyCode }) => {
+        if (keycodes.DUCK.indexOf(keyCode) !== -1)
+            run()
     })
 }
 

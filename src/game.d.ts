@@ -35,7 +35,11 @@ interface Trex extends Entity {
 
     jumpStartT?: number
     jumpStartX?: number
-    jumpDistance?: number,
+    jumpDistance?: number
+
+    duckingImgPos: Vector
+    duckingShape: Rect[]
+    duckingSize: Size
 
     nextSpeedUpT: number
 }
