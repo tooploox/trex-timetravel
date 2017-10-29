@@ -1,5 +1,5 @@
 import { pause, jump } from "./game"
-import { Vector, Size } from "./physicsEngine"
+import { Vector, Size, sum } from "./physicsEngine"
 import { mirrorH } from './camera'
 
 export namespace draw {
@@ -34,6 +34,21 @@ export namespace draw {
         ctx.strokeRect(box.x, box.y, box.width, box.height)
         ctx.restore()
     }
+
+    export function collisionShape(ctx: Context, obj: Entity) {
+        ctx.save()
+        ctx.strokeStyle = '#f00'
+        const { shape, location, size } = obj
+        const y = mirrorH(ctx.canvas.height, { ...size, ...location }).y
+        shape.forEach(shape => {
+            ctx.strokeStyle = '#f00'
+
+            let box = { ...shape, x: shape.x + location.x, y: shape.y + y }
+            // mirrorH(ctx.canvas.height, { ...shape, ...sum(location, shape) })
+            ctx.strokeRect(box.x, box.y, box.width, box.height)
+        })
+        ctx.restore()
+    }
 }
 
 interface View {
@@ -60,15 +75,16 @@ class CanvasView implements View {
 
     render(world: World) {
         draw.background(this.ctx)
+        const { trex, t, dt } = world
         const w = 44
         const dtPerFrame = 12
-        const offset = world.trex.location.y > 0 ? 0 :
-            Math.floor((Math.floor(world.t / world.dt) % (2 * dtPerFrame)) / dtPerFrame)
-        const source = { ...Vector(936 + offset * w, 2), ...Size(44, 47) }
-        draw.image(this.ctx, this.image, world.trex.location, source)
+        const offset = trex.location.y > 0 ? 0 :
+            Math.floor((Math.floor(t / dt) % (2 * dtPerFrame)) / dtPerFrame)
+        const source = { ...Vector(936 + offset * w, 2), ...trex.size }
+        draw.image(this.ctx, this.image, trex.location, source)
         draw.ground(this.ctx)
 
-        //draw.collisionBox(this.ctx, { ...source, ...world.trex.location })
+        draw.collisionShape(this.ctx, world.trex)
     }
 }
 
@@ -93,6 +109,6 @@ export const renderWorld = (world: World) =>
     views.forEach(v => v.render(world))
 
 export function init() {
-    views = [new CanvasView(), new CanvasView(), new CanvasView()]
+    views = [new CanvasView(), new CanvasView(), new CanvasView(), new CanvasView(), new CanvasView()]
     initKeyboard()
 }

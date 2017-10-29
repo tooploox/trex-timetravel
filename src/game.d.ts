@@ -19,6 +19,7 @@ interface World {
 interface Entity extends RigidBody {
     size: Size
     type?: EntityType
+    shape: Rect[]
 }
 
 interface Trex extends Entity {

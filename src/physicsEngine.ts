@@ -1,6 +1,6 @@
 export const Vector = (x: number, y: number): Vector => ({ x, y })
-
 export const Size = (width: number, height: number): Size => ({ width, height })
+export const Rect = (x: number, y: number, width: number, height: number): Rect => ({ x, y, width, height })
 
 export function RigidBody(mass: number, location = Vector(0, 0),
     velocity = Vector(0, 0), forces: Vector[] = [], impulses: Vector[] = []): RigidBody {
