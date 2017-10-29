@@ -21,18 +21,28 @@ export namespace Trex {
         }
     }
 
-    export const duck = () => updateState(TrexState.Running, TrexState.Ducking)
+    export const duck = () => {
+        const { trex } = store.getState().world
+        if (trex.location.y < 5) {
+            const location = { x: trex.location.x, y: 0 }
+            const newTrex = { ...trex, location, state: TrexState.Ducking }
+            store.dispatch(world.Trex.jump(newTrex))
+        } else
+            updateState(TrexState.Running, TrexState.Ducking)
+
+    }
 
     export const run = () => updateState(TrexState.Ducking, TrexState.Running)
 
     export function jump() {
         const state = store.getState().world
         const trex = state.trex
-        if (state.t - trex.jumpStartT < state.dt * 20)
-            store.dispatch(world.Trex.update(applyImpulse(trex, Vector(0, 800))))
-        else if (trex.location.y === 0) {
+
+        if (trex.location.y === 0) {
             const newTrex = { ...applyImpulse(trex, Vector(0, 4000)), state: TrexState.Jumping }
             store.dispatch(world.Trex.jump(newTrex))
+        } else if (state.t - trex.jumpStartT < state.dt * 20) {
+            store.dispatch(world.Trex.update(applyImpulse(trex, Vector(0, 800))))
         }
     }
 
@@ -101,7 +111,7 @@ namespace Objects {
         const lastX = state.objects.length === 0 ? 300 : state.objects[state.objects.length - 1].location.x
         const maxW = window.innerWidth
         const objects = state.objects
-            .filter(o => o.location.x + maxW * .2 > state.trex.location.x)
+            .filter(o => o.location.x + maxW * .5 > state.trex.location.x)
             .map(o => o.type === EntityType.Pterodactyl ? recalculate(o, 1 / state.dt) : o)
         store.dispatch(world.updateObjects(objects))
         if (state.trex.location.x + maxW > lastX) {
