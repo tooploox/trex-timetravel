@@ -7,6 +7,8 @@ declare const enum EntityType {
 }
 
 interface World {
+    dt: number
+    t: number
     objects?: Entity[]
     movingObjects?: Entity[]
     trex?: Entity

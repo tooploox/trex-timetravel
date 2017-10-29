@@ -5,7 +5,7 @@ import { mirrorH } from './camera'
 export namespace draw {
     type Context = CanvasRenderingContext2D
     type Image = HTMLImageElement
-    function rect(ctx: Context, location: Vector, size: Size, color = "#2195f3") {
+    function rect(ctx: Context, location: Vector, size: Size, color = "#535353") {
         ctx.beginPath()
         ctx.rect(location.x, ctx.canvas.height - location.y - size.height, size.width, size.height)
         ctx.fillStyle = color
@@ -61,9 +61,12 @@ class CanvasView implements View {
     render(world: World) {
         draw.background(this.ctx)
         draw.ground(this.ctx)
-        const source = { ...Vector(848, 2), ...Size(44, 47) }
+        const w = 44
+        const dtPerFrame = 7
+        const offset = Math.floor((Math.floor(world.t / world.dt) % (2 * dtPerFrame)) / dtPerFrame)
+        const source = { ...Vector(936 + offset * w, 2), ...Size(44, 47) }
         draw.image(this.ctx, this.image, world.trex.location, source)
-        draw.collisionBox(this.ctx, { ...source, ...world.trex.location })
+        //draw.collisionBox(this.ctx, { ...source, ...world.trex.location })
     }
 }
 

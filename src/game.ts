@@ -13,10 +13,12 @@ export const pause = () => {
 function recalculate() {
     if (isPaused)
         return
-    const worldState = store.getState().world
-    const trex = update(worldState.trex, 1 / ms)
+    const state = store.getState().world
+    const t = state.t + state.dt
+    const trex = update(state.trex, 1 / state.dt)
     store.dispatch(world.Trex.update(trex))
-    view.renderWorld(worldState)
+    store.dispatch(world.update(t))
+    view.renderWorld(state)
 }
 
 export function jump() {
@@ -29,7 +31,6 @@ export function jump() {
 
 export function init() {
     const G = Vector(0, -3000)
-    //Rect()
     const trex: Entity = {
         ...RigidBody(12, Vector(0, 0), Vector(10, 0), [G]),
         size: Size(4, 4.272)
