@@ -1,4 +1,4 @@
-import { pause, jump, duck, run } from "./game"
+import { pause, Trex } from "./game"
 import { Vector, Size, sum } from "./physicsEngine"
 import { mirrorH } from './projection'
 
@@ -90,24 +90,17 @@ class CanvasView implements View {
 }
 
 function initKeyboard() {
-    const keycodes = {
-        JUMP: [38],  // Up
-        PAUSE: [32],  // spacebar
-        RESTART: [13],  // Enter
-        DUCK: [40]
-    }
+    const DuckKey = 40
+    const keycodesMap = { 38: Trex.jump, 32: pause, [DuckKey]: Trex.duck }
 
     document.addEventListener('keydown', ({ keyCode }) => {
-        if (keycodes.PAUSE.indexOf(keyCode) !== -1)
-            pause()
-        else if (keycodes.DUCK.indexOf(keyCode) !== -1)
-            duck()
-        else if (keycodes.JUMP.indexOf(keyCode) !== -1)
-            jump()
+        if ((keycodesMap as any)[keyCode])
+            (keycodesMap as any)[keyCode]()
     })
+
     document.addEventListener('keyup', ({ keyCode }) => {
-        if (keycodes.DUCK.indexOf(keyCode) !== -1)
-            run()
+        if (keyCode === DuckKey)
+            Trex.run()
     })
 }
 
