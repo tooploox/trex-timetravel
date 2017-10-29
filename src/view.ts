@@ -2,7 +2,9 @@ import { store } from "./index"
 import { pause, jump } from "./game"
 import { Vector, Size } from "./physicsEngine"
 namespace draw {
-    function rect(ctx: CanvasRenderingContext2D, location: Vector, size: Size, color = "#2195f3") {
+    type Context = CanvasRenderingContext2D
+    type Image = HTMLImageElement
+    function rect(ctx: Context, location: Vector, size: Size, color = "#2195f3") {
         ctx.beginPath()
         ctx.rect(location.x, ctx.canvas.height - location.y - size.height, size.width, size.height)
         ctx.fillStyle = color
@@ -10,14 +12,17 @@ namespace draw {
         ctx.closePath()
     }
 
-    export const trex = (ctx: CanvasRenderingContext2D, trex: RigidBody) =>
-        rect(ctx, trex.location, { width: 10, height: 30 })
-
-    export const ground = (ctx: CanvasRenderingContext2D) =>
+    export const ground = (ctx: Context) =>
         rect(ctx, { x: 0, y: 0 }, { width: ctx.canvas.width, height: 1 })
 
-    export const background = (ctx: CanvasRenderingContext2D) =>
+    export const background = (ctx: Context) =>
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+
+    export const image = (ctx: Context, image: Image, location: Vector, source: Rect) =>
+        ctx.drawImage(image,
+            source.x, source.y, source.width, source.height,
+            location.x - source.width / 2, ctx.canvas.height - location.y - source.height - 1,
+            source.width, source.height)
 }
 
 interface View {
@@ -50,15 +55,8 @@ class CanvasView implements View {
     render(world: World) {
         draw.background(this.ctx)
         draw.ground(this.ctx)
-        //draw.trex(this.ctx, world.trex)
-
         const source = { ...Vector(848, 2), ...Size(44, 47) }
-        this.ctx.save()
-        this.ctx.drawImage(this.image,
-            source.x, source.y, source.width, source.height,
-            world.trex.location.x - source.width / 2, this.ctx.canvas.height - world.trex.location.y - source.height,
-            source.width, source.height)
-        this.ctx.restore()
+        draw.image(this.ctx, this.image, world.trex.location, source)
     }
 }
 
