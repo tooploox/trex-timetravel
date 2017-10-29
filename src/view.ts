@@ -1,8 +1,8 @@
-import { store } from "./index"
 import { pause, jump } from "./game"
 import { Vector, Size } from "./physicsEngine"
+import { mirrorH } from './camera'
 
-namespace draw {
+export namespace draw {
     type Context = CanvasRenderingContext2D
     type Image = HTMLImageElement
     function rect(ctx: Context, location: Vector, size: Size, color = "#2195f3") {
@@ -19,11 +19,21 @@ namespace draw {
     export const background = (ctx: Context) =>
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
 
-    export const image = (ctx: Context, image: Image, location: Vector, source: Rect) =>
+    export const image = (ctx: Context, image: Image, location: Vector, source: Rect) => {
+        const box = mirrorH(ctx.canvas.height, { ...source, ...location })
         ctx.drawImage(image,
             source.x, source.y, source.width, source.height,
-            location.x - source.width / 2, ctx.canvas.height - location.y - source.height - 1,
-            source.width, source.height)
+            box.x, box.y, box.width, box.height
+        )
+    }
+
+    export function collisionBox(ctx: Context, tRexBox: Rect) {
+        ctx.save()
+        ctx.strokeStyle = '#f00'
+        const box = mirrorH(ctx.canvas.height, tRexBox)
+        ctx.strokeRect(box.x, box.y, box.width, box.height)
+        ctx.restore()
+    }
 }
 
 interface View {
@@ -53,6 +63,7 @@ class CanvasView implements View {
         draw.ground(this.ctx)
         const source = { ...Vector(848, 2), ...Size(44, 47) }
         draw.image(this.ctx, this.image, world.trex.location, source)
+        draw.collisionBox(this.ctx, { ...source, ...world.trex.location })
     }
 }
 
@@ -73,13 +84,10 @@ function initKeyboard() {
 
 let views: View[]
 
-const renderWorld = () => {
-    const world = store.getState().world
+export const renderWorld = (world: World) =>
     views.forEach(v => v.render(world))
-}
 
 export function init() {
     views = [new CanvasView(), new CanvasView(), new CanvasView()]
     initKeyboard()
-    setInterval(renderWorld, 1000 / 60)
 }

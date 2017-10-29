@@ -1,5 +1,6 @@
 import * as Redux from 'redux'
-import * as world from "@/store/world"
+import * as world from "./store/world"
+import * as game from "./game"
 
 export type Store = Redux.Store<RootState>
 
@@ -23,8 +24,4 @@ export function createStore(initialState = {}): Store {
 
 export const store = createStore()
 
-import { init as initPhysicsEngine } from "./game"
-import { init as initView } from "./view"
-
-initPhysicsEngine()
-initView()
+game.init()
