@@ -57,7 +57,7 @@ function getStaticObjects(xOffset: number, minDistance: number) {
             ...RigidBody(100, Vector(xOffset + i, 0)),
             size: Size(25, 50),
             shape: [
-                Rect(0, 12, 9, 32), // left
+                Rect(0, 12, 9, 20), // left
                 Rect(9, 0, 7, 46), // middle
                 Rect(19, 11, 5, 20), // right
             ]

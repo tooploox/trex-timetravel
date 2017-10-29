@@ -69,3 +69,5 @@ interface IActionCreatorFactory {
 type Reducer<T> = (state: T, action: { type: string }) => T
 type Casted<T, S> = {[P in keyof T]: S}
 type ReducerOf<T> = Casted<T, Reducer<any>>
+type Context = CanvasRenderingContext2D
+type Image = HTMLImageElement

@@ -3,11 +3,7 @@ import { Vector, Size, sum } from "./physicsEngine"
 import { mirrorH } from './projection'
 
 export namespace draw {
-    type Context = CanvasRenderingContext2D
-    type Image = HTMLImageElement
-
-    export const background = (ctx: Context) =>
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+    export const background = (ctx: Context) => ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
 
     export const image = (ctx: Context, image: Image, location: Vector, source: Rect) => {
         const box = mirrorH(ctx.canvas.height, { ...source, ...location })
@@ -17,14 +13,12 @@ export namespace draw {
         )
     }
 
-    export function shape(ctx: Context, obj: Trex, strokeStyle = '#f00') {
-        ctx.save()
+    export function shape(ctx: Context, obj: Entity, strokeStyle = '#f00') {
         ctx.strokeStyle = strokeStyle
         const { shape, location, size } = obj
         const y = mirrorH(ctx.canvas.height, { ...size, ...location }).y
         shape.map(shape => ({ ...shape, x: shape.x + location.x, y: shape.y + y }))
             .forEach(box => ctx.strokeRect(box.x, box.y, box.width, box.height))
-        ctx.restore()
     }
 }
 
@@ -56,7 +50,7 @@ class CanvasView implements View {
             const source = { ...Vector(332, 2), ...obj.size }
             const location = sum(obj.location, this.frame)
             draw.image(this.ctx, this.image, location, source)
-            //  draw.shape(this.ctx, { ...obj, location }, '#0f0')
+            draw.shape(this.ctx, { ...obj, location }, '#0f0')
         })
     }
 
@@ -70,14 +64,14 @@ class CanvasView implements View {
     renderTrex(world: World) {
         const location = sum(world.trex.location, this.frame)
         draw.image(this.ctx, this.image, location, this.getTrexFrame(world))
-        //draw.shape(this.ctx, { ...world.trex as Entity, location })
+        draw.shape(this.ctx, { ...world.trex as Entity, location })
     }
 
     renderBg(world: World) {
-        const size = Size(1190, 20)
+        const size = Size(1190, 16)
         const x = world.trex.location.x
         const i = Math.floor(x / size.width)
-        const source = { ...Vector(0, 51), ...Size(1200, 20) }
+        const source = { ...Vector(12, 51), ...Size(1200, 16) }
         draw.image(this.ctx, this.image, Vector(i * size.width - x, 0), source)
         draw.image(this.ctx, this.image, Vector((i + 1) * size.width - x, 0), source)
     }
