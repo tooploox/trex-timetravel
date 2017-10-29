@@ -37,6 +37,17 @@ describe("PhysicsEngine", () => {
             expect(update(rock, 2)).toEqual(expected)
         })
 
+        it("creates new object when updating rigid body", () => {
+            const rock = { ...RigidBody(1), foo: 1 }
+            expect(update(rock, 100)).not.toBe(rock)
+        })
+
+        it("preserves properties when updating rigid body", () => {
+            const rock = { ...RigidBody(1), foo: 1 }
+            const expected = { ...rock }
+            expect(update(rock, 100)).toEqual(expected)
+        })
+
         // An object at rest stays at rest and an object in motion stays in motion
         // at a constant speed and direction unless acted upon by an unbalanced force.
         it("moves object when no force is applyied and object was moving", () => {
@@ -61,16 +72,14 @@ describe("PhysicsEngine", () => {
             const location1s = Vector(0, ball.location.y + velocity1s.y)
 
             it("recalculates jumping body after 1s (with 1s step)", () => {
-                const expected: RigidBody = { ...ball, velocity: velocity1s, location: location1s }
-                delete expected.impulses
+                const expected: RigidBody = { ...ball, velocity: velocity1s, location: location1s, impulses: [] }
                 expect(update(ball, 1)).toEqual(expected)
             })
 
             it("recalculates jumping body after 2s (with 1s step)", () => {
                 const velocity2s = Vector(0, velocity1s.y + gravityForce.y / ball.mass)
                 const location2s = Vector(0, location1s.y + velocity2s.y)
-                const expected: RigidBody = { ...ball, velocity: velocity2s, location: location2s }
-                delete expected.impulses
+                const expected: RigidBody = { ...ball, velocity: velocity2s, location: location2s, impulses: [] }
                 expect(update(update(ball, 1), 1)).toEqual(expected)
             })
 

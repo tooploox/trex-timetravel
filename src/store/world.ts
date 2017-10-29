@@ -3,9 +3,9 @@ import { eq, actionCreatorFactory } from "@/typedActions"
 
 export namespace Trex {
     const actionCreator = actionCreatorFactory('world.trex')
-    export const init = actionCreator<RigidBody>('init')
-    export const update = actionCreator<RigidBody>('update')
-    export const jump = actionCreator<RigidBody>('jump')
+    export const init = actionCreator<Entity>('init')
+    export const update = actionCreator<Entity>('update')
+    export const jump = actionCreator<Entity>('jump')
 }
 
 export type State = World

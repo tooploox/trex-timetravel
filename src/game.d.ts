@@ -9,7 +9,7 @@ declare const enum EntityType {
 interface World {
     objects?: Entity[]
     movingObjects?: Entity[]
-    trex?: RigidBody
+    trex?: Entity
     // Defines max right point that blocks should be rendered for
     maxView: Rect
 }

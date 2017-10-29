@@ -1,6 +1,6 @@
 import { store } from "./index"
 import * as world from './store/world'
-import { update, Vector, RigidBody, applyImpulse } from "./physicsEngine"
+import { update, Vector, RigidBody, Size, applyImpulse } from "./physicsEngine"
 
 const ms = 1000 / 50
 let isPaused = false
@@ -17,13 +17,6 @@ function recalculate() {
     store.dispatch(world.Trex.update(trex))
 }
 
-export function init() {
-    const G = Vector(0, -3000)
-    const trex = RigidBody(12, Vector(0, 0), Vector(10, 0), [G])
-    store.dispatch(world.Trex.init(trex))
-    setInterval(recalculate, ms)
-}
-
 export function jump() {
     const trex = store.getState().world.trex
     if (trex.location.y !== 0)
@@ -31,3 +24,16 @@ export function jump() {
     const newTrex = applyImpulse(trex, Vector(0, 3000))
     store.dispatch(world.Trex.jump(newTrex))
 }
+
+export function init() {
+    const G = Vector(0, -3000)
+
+    const trex: Entity = {
+        ...RigidBody(12, Vector(0, 0), Vector(10, 0), [G]),
+        size: Size(4, 4.272)
+    }
+
+    store.dispatch(world.Trex.init(trex))
+    setInterval(recalculate, ms)
+}
+

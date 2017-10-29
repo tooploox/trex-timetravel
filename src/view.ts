@@ -1,6 +1,7 @@
 import { store } from "./index"
 import { pause, jump } from "./game"
 import { Vector, Size } from "./physicsEngine"
+
 namespace draw {
     type Context = CanvasRenderingContext2D
     type Image = HTMLImageElement
