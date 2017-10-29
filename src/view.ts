@@ -1,6 +1,6 @@
 import { pause, jump } from "./game"
-import { Vector, Size, sum } from "./physicsEngine"
-import { mirrorH } from './camera'
+import { Vector } from "./physicsEngine"
+import { mirrorH } from './projection'
 
 export namespace draw {
     type Context = CanvasRenderingContext2D
@@ -27,26 +27,13 @@ export namespace draw {
         )
     }
 
-    export function collisionBox(ctx: Context, tRexBox: Rect) {
+    export function shape(ctx: Context, obj: Entity, strokeStyle = '#f00') {
         ctx.save()
-        ctx.strokeStyle = '#f00'
-        const box = mirrorH(ctx.canvas.height, tRexBox)
-        ctx.strokeRect(box.x, box.y, box.width, box.height)
-        ctx.restore()
-    }
-
-    export function collisionShape(ctx: Context, obj: Entity) {
-        ctx.save()
-        ctx.strokeStyle = '#f00'
+        ctx.strokeStyle = strokeStyle
         const { shape, location, size } = obj
         const y = mirrorH(ctx.canvas.height, { ...size, ...location }).y
-        shape.forEach(shape => {
-            ctx.strokeStyle = '#f00'
-
-            let box = { ...shape, x: shape.x + location.x, y: shape.y + y }
-            // mirrorH(ctx.canvas.height, { ...shape, ...sum(location, shape) })
-            ctx.strokeRect(box.x, box.y, box.width, box.height)
-        })
+        shape.map(shape => ({ ...shape, x: shape.x + location.x, y: shape.y + y }))
+            .forEach(box => ctx.strokeRect(box.x, box.y, box.width, box.height))
         ctx.restore()
     }
 }
@@ -61,7 +48,7 @@ class CanvasView implements View {
     frame: Rect
     image: HTMLImageElement
     constructor() {
-        this.image = new Image(60, 45)   // using optional size for image
+        this.image = new Image()
         this.image.src =
             'https://github.com/wayou/t-rex-runner/raw/gh-pages/assets/default_100_percent/100-offline-sprite.png'
 
@@ -73,8 +60,15 @@ class CanvasView implements View {
         this.frame = { x: 0, y: 0, width: 30, height: 10 }
     }
 
-    render(world: World) {
-        draw.background(this.ctx)
+    renderObjects(world: World) {
+        world.objects.forEach(obj => {
+            const source = { ...Vector(332, 2), ...obj.size }
+            draw.image(this.ctx, this.image, obj.location, source)
+            draw.shape(this.ctx, obj, '#0f0')
+        })
+    }
+
+    renderTrex(world: World) {
         const { trex, t, dt } = world
         const w = 44
         const dtPerFrame = 12
@@ -82,9 +76,14 @@ class CanvasView implements View {
             Math.floor((Math.floor(t / dt) % (2 * dtPerFrame)) / dtPerFrame)
         const source = { ...Vector(936 + offset * w, 2), ...trex.size }
         draw.image(this.ctx, this.image, trex.location, source)
-        draw.ground(this.ctx)
+        draw.shape(this.ctx, world.trex)
+    }
 
-        draw.collisionShape(this.ctx, world.trex)
+    render(world: World) {
+        draw.background(this.ctx)
+        this.renderObjects(world)
+        this.renderTrex(world)
+        draw.ground(this.ctx)
     }
 }
 
