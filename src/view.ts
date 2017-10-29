@@ -98,10 +98,8 @@ function initKeyboard() {
             (keycodesMap as any)[keyCode]()
     })
 
-    document.addEventListener('keyup', ({ keyCode }) => {
-        if (keyCode === DuckKey)
-            Trex.run()
-    })
+    document.addEventListener('keyup', ({ keyCode }) =>
+        (keyCode === DuckKey) && Trex.run())
 }
 
 let views: View[]
@@ -110,6 +108,7 @@ export const renderWorld = (world: World) =>
     views.forEach(v => v.render(world))
 
 export function init() {
+    //views = Array.from(Array(6)).map(i => new CanvasView)
     views = [new CanvasView()]
     initKeyboard()
 }

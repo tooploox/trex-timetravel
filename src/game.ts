@@ -1,12 +1,13 @@
 import { store } from "./index"
 import * as world from './store/world'
 import * as view from './view'
-import { update, Vector, RigidBody, Size, applyImpulse, Rect, sum } from "./physicsEngine"
+import { update as recalculate, Vector, RigidBody, Size, applyImpulse, Rect, sum } from "./physicsEngine"
 
 const randomNumber = (max: number) => Math.floor(Math.random() * 100000 % max)
 
 let isPaused = false
 export const pause = () => isPaused = !isPaused
+
 function Entity(location: Vector, size: Size, shape: Rect[], imgPos: Vector, type: EntityType): Entity {
     return { ...RigidBody(100, location), size, shape, type, imgPos }
 }
@@ -35,8 +36,8 @@ export namespace Trex {
         }
     }
 
-    export function update2(state: World) {
-        let newTrex = update(state.trex, 1 / state.dt)
+    export function update(state: World) {
+        let newTrex = recalculate(state.trex, 1 / state.dt)
 
         if (state.t > newTrex.nextSpeedUpT) {
             const nextSpeedUpT = newTrex.nextSpeedUpT * 1.2
@@ -80,21 +81,22 @@ namespace Objects {
         return Entity(location, Size(46, 40), shape, Vector(134, 2), EntityType.Pterodactyl)
     }
 
-    const Obstacles = [Cactus, Pterodactyl]
-    const getRandom = (x: number) => Obstacles[randomNumber(Obstacles.length)](x)
+    const obstacles = [Cactus, Pterodactyl]
+    const getRandom = (x: number) => obstacles[randomNumber(obstacles.length)](x)
 
-    function get(xOffset: number, minDistance: number) {
+    function get(x: number, minDistance: number) {
         const objects: Entity[] = []
-        for (let i = 0; objects.length < 4; i++) {
+        for (let offset = 0; objects.length < 4; offset++) {
             if (Math.random() * 1000 % 200 >= 1)
                 continue
-            const object = getRandom(xOffset + i)
-            i += minDistance * 1.5 || object.size.width * 8
+            const object = getRandom(x + offset)
+            offset += minDistance * 1.4 || object.size.width * 6
             objects.push(object)
         }
         return objects
     }
-    export function update2(state: World) {
+
+    export function update(state: World) {
         const lastX = state.objects.length === 0 ? 300 : state.objects[state.objects.length - 1].location.x
         const maxW = window.innerWidth
 
@@ -106,17 +108,17 @@ namespace Objects {
     }
 }
 
-function recalculate() {
+function tick() {
     const state = store.getState().world
     view.renderWorld(state)
     if (isPaused)
         return
-    Objects.update2(state)
-    Trex.update2(state)
+    Objects.update(state)
+    Trex.update(state)
 }
 
 export function init() {
     Trex.init()
     view.init()
-    setInterval(recalculate, 1000 / store.getState().world.dt)
+    setInterval(tick, 1000 / store.getState().world.dt)
 }
