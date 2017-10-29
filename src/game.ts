@@ -3,12 +3,21 @@ import * as world from './store/world'
 import * as view from './view'
 import { update, Vector, RigidBody, Size, applyImpulse, Rect, sum } from "./physicsEngine"
 
-const randomNumber = (max: number) => Math.floor(Math.random() % 2)
+const randomNumber = (max: number) => Math.floor(Math.random() * 100000 % max)
 
 let isPaused = false
 export const pause = () => isPaused = !isPaused
 function Entity(location: Vector, size: Size, shape: Rect[], imgPos: Vector, type: EntityType): Entity {
     return { ...RigidBody(100, location), size, shape, type, imgPos }
+}
+
+const G = Vector(0, -9810)
+const Trex = () => {
+    const shape = [Rect(11, 15, 17, 26), Rect(2, 17, 9, 18), Rect(20, 1, 22, 15), Rect(14, 20, 20, 4)]
+    const entity = Entity(Vector(0, 0), Size(44, 47), shape, Vector(936, 2), EntityType.Trex)
+    const velocity = Vector(250, 0)
+    const trex: Trex = { ...entity, mass: 10, velocity, forces: [G], state: TrexState.Running, nextSpeedUpT: 1000 }
+    return trex
 }
 
 const Cactus = (x: number) => {
@@ -23,7 +32,7 @@ const Pterodactyl = (x: number) => {
 }
 
 const Obstacles: ((x: number) => Entity)[] = [Cactus, Pterodactyl]
-const getRandomObstacle = (x: number) => Obstacles[randomNumber(Obstacles.length)](x)
+const getRandomObstacle = (x: number) => Obstacles[randomNumber(Obstacles.length + 1)](x)
 
 function recalculate() {
     const state = store.getState().world
@@ -80,21 +89,7 @@ function getStaticObjects(xOffset: number, minDistance: number) {
 }
 
 export function init() {
-    const G = Vector(0, -9810)
-
-    const trex: Trex = {
-        ...RigidBody(10, Vector(0, 0), Vector(250, 0), [G]),
-        size: Size(44, 47),
-        state: TrexState.Running,
-        nextSpeedUpT: 1000,
-        shape: [
-            Rect(11, 15, 17, 26), // body
-            Rect(2, 17, 9, 18), // tail
-            Rect(20, 1, 22, 15), // head
-            Rect(14, 20, 20, 4) // hand
-        ]
-    }
-    store.dispatch(world.Trex.update(trex))
+    store.dispatch(world.Trex.update(Trex()))
     view.init()
     setInterval(recalculate, 1000 / store.getState().world.dt)
 }

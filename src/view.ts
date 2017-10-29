@@ -58,7 +58,7 @@ class CanvasView implements View {
         const { trex, t, dt } = world
         const dtPerFrame = 14
         const frameOffset = trex.location.y > 0 ? -2 : Math.floor(t / dt % (2 * dtPerFrame) / dtPerFrame)
-        return { ...Vector(936 + frameOffset * trex.size.width, 2), ...trex.size }
+        return { ...Vector(trex.imgPos.x + frameOffset * trex.size.width, trex.imgPos.y), ...trex.size }
     }
 
     renderTrex(world: World) {
