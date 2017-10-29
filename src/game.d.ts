@@ -2,7 +2,7 @@
 
 declare const enum EntityType {
     Trex = 0,
-    Pterodactil = 1,
+    Pterodactyl = 1,
     CactusSmall = 2,
     CactusLarge = 3
 }

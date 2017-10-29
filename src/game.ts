@@ -3,43 +3,27 @@ import * as world from './store/world'
 import * as view from './view'
 import { update, Vector, RigidBody, Size, applyImpulse, Rect, sum } from "./physicsEngine"
 
+const randomNumber = (max: number) => Math.floor(Math.random() % 2)
+
 let isPaused = false
 export const pause = () => isPaused = !isPaused
-
-function createCactus(xOffset: number) {
-    return {
-        ...RigidBody(100, Vector(xOffset, 0)),
-        size: Size(25, 50),
-        shape: [
-            Rect(0, 12, 9, 32), // left
-            Rect(9, 0, 7, 46), // middle
-            Rect(19, 11, 5, 20), // right
-        ],
-        imgPos: Vector(332, 2)
-    }
-}
-
 function Entity(location: Vector, size: Size, shape: Rect[], imgPos: Vector, type: EntityType): Entity {
     return { ...RigidBody(100, location), size, shape, type, imgPos }
+}
+
+const Cactus = (x: number) => {
+    const shape = [Rect(0, 12, 9, 32), Rect(9, 0, 7, 46), Rect(19, 11, 5, 20)]
+    return Entity(Vector(x, 0), Size(25, 50), shape, Vector(332, 2), EntityType.Pterodactyl)
 }
 
 const Pterodactyl = (x: number) => {
     const shape = [Rect(2, 8, 14, 14), Rect(16, 16, 16, 30), Rect(32, 19, 12, 20)]
     const location = Vector(x, 0)
-    return Entity(location, Size(46, 40), shape, Vector(134, 2), EntityType.Pterodactil)
+    return Entity(location, Size(46, 40), shape, Vector(134, 2), EntityType.Pterodactyl)
 }
 
-const OBSTACLES = [
-    createCactus,
-    Pterodactyl,
-]
-
-function getRandomObstacle(xOffset: number) {
-    let obstacleCreator = OBSTACLES[
-        Math.floor((Math.random() * OBSTACLES.length))
-    ]
-    return obstacleCreator(xOffset)
-}
+const Obstacles: ((x: number) => Entity)[] = [Cactus, Pterodactyl]
+const getRandomObstacle = (x: number) => Obstacles[randomNumber(Obstacles.length)](x)
 
 function recalculate() {
     const state = store.getState().world
