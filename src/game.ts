@@ -20,8 +20,10 @@ function recalculate() {
         store.dispatch(world.addStaticObjects(getObjects(lastX + 300)))
 
     const t = state.t + state.dt
-    const trex = update(state.trex, 1 / state.dt)
-    store.dispatch(world.Trex.update({ ...trex, velocity: sum(trex.velocity, Vector(.01, 0)) }))
+    let trex = update(state.trex, 1 / state.dt)
+    if (state.t % 1000 === 0)
+        trex = { ...trex, velocity: sum(trex.velocity, Vector(1, 0)) }
+    store.dispatch(world.Trex.update(trex))
     store.dispatch(world.update(t))
 }
 

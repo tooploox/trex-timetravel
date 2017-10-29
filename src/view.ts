@@ -114,6 +114,6 @@ export const renderWorld = (world: World) =>
     views.forEach(v => v.render(world))
 
 export function init() {
-    views = [new CanvasView(), new CanvasView(), new CanvasView(), new CanvasView(), new CanvasView()]
+    views = [new CanvasView()]
     initKeyboard()
 }
