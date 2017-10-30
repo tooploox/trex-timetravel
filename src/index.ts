@@ -1,5 +1,5 @@
 import * as Redux from 'redux'
-import * as world from "./store/world"
+import * as world from "./store"
 import { init as initGame } from "./game"
 
 export type Store = Redux.Store<RootState>

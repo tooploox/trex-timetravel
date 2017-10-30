@@ -17,10 +17,7 @@ interface World {
     dt: number
     t: number
     objects?: Entity[]
-    movingObjects?: Entity[]
     trex?: Trex
-    // Defines max right point that blocks should be rendered for
-    maxView: Rect
 }
 
 interface Entity extends RigidBody {
@@ -34,12 +31,15 @@ interface Trex extends Entity {
     state: TrexState
 
     jumpStartT?: number
-    jumpStartX?: number
-    jumpDistance?: number
 
     duckingImgPos: Vector
     duckingShape: Rect[]
     duckingSize: Size
 
     nextSpeedUpT: number
+}
+
+interface View {
+    frame: Rect
+    render: (world: World) => void
 }

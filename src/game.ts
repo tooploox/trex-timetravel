@@ -1,8 +1,7 @@
 import { store } from "./index"
-import * as world from './store/world'
+import * as world from './store'
 import * as view from './view'
 import { update as recalculate, Vector, RigidBody, Size, applyImpulse, Rect, sum } from './physicsEngine'
-import { recording } from './store/world'
 
 const randomNumber = (max: number) => Math.floor(Math.random() * 100000 % max)
 
@@ -18,7 +17,7 @@ export namespace Trex {
         const { trex } = store.getState().world
         if (trex.state === reqState) {
             const newTrex = { ...trex, state }
-            store.dispatch(world.Trex.jump(newTrex))
+            store.dispatch(world.trex.jump(newTrex))
         }
     }
 
@@ -27,7 +26,7 @@ export namespace Trex {
         if (trex.location.y < 5) {
             const location = { x: trex.location.x, y: 0 }
             const newTrex = { ...trex, location, state: TrexState.Ducking }
-            store.dispatch(world.Trex.jump(newTrex))
+            store.dispatch(world.trex.jump(newTrex))
         } else
             updateState(TrexState.Running, TrexState.Ducking)
 
@@ -41,9 +40,9 @@ export namespace Trex {
 
         if (trex.location.y === 0) {
             const newTrex = { ...applyImpulse(trex, Vector(0, 4000)), state: TrexState.Jumping }
-            store.dispatch(world.Trex.jump(newTrex))
+            store.dispatch(world.trex.jump(newTrex))
         } else if (state.t - trex.jumpStartT < state.dt * 20) {
-            store.dispatch(world.Trex.update(applyImpulse(trex, Vector(0, 800))))
+            store.dispatch(world.trex.update(applyImpulse(trex, Vector(0, 800))))
         }
     }
 
@@ -57,10 +56,9 @@ export namespace Trex {
         }
 
         if (newTrex.state === TrexState.Jumping && newTrex.location.y === 0) {
-            const jumpDistance = newTrex.location.x - newTrex.jumpStartX
-            newTrex = { ...newTrex, state: TrexState.Running, jumpDistance }
+            newTrex = { ...newTrex, state: TrexState.Running }
         }
-        store.dispatch(world.Trex.update(newTrex))
+        store.dispatch(world.trex.update(newTrex))
     }
 
     export const init = () => {
@@ -76,7 +74,7 @@ export namespace Trex {
             duckingShape: [Rect(0, 5, 62, 20)],
             duckingSize: Size(59, 32),
         }
-        store.dispatch(world.Trex.update(trex))
+        store.dispatch(world.trex.update(trex))
     }
 }
 
@@ -114,11 +112,11 @@ namespace Objects {
         const objects = state.objects
             .filter(o => o.location.x + maxW * .5 > state.trex.location.x)
             .map(o => o.type === EntityType.Pterodactyl ? recalculate(o, 1 / state.dt) : o)
-        store.dispatch(world.updateObjects(objects))
+        store.dispatch(world.objects.update(objects))
         if (state.trex.location.x + maxW > lastX) {
             const minDistance = state.trex.velocity.x
             const minX = lastX + minDistance
-            store.dispatch(world.addObjects(get(minX, minDistance)))
+            store.dispatch(world.objects.add(get(minX, minDistance)))
         }
     }
 }
@@ -129,9 +127,9 @@ function tick() {
     if (isPaused)
         return
     if (isRewinding) {
-        const prevWorld = recording.pop()
+        const prevWorld = world.recording.pop()
         if (prevWorld)
-            store.dispatch(world.initWorld(prevWorld))
+            store.dispatch(world.init(prevWorld))
         else
             isRewinding = false
     } else {
