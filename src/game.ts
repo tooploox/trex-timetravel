@@ -2,6 +2,7 @@ import { store } from "./index"
 import * as world from './store/world'
 import * as view from './view'
 import { update as recalculate, Vector, RigidBody, Size, applyImpulse, Rect, sum } from './physicsEngine'
+import { recording } from './store/world'
 
 const randomNumber = (max: number) => Math.floor(Math.random() * 100000 % max)
 
@@ -119,7 +120,6 @@ namespace Objects {
             const minX = lastX + minDistance
             store.dispatch(world.addObjects(get(minX, minDistance)))
         }
-
     }
 }
 
@@ -128,9 +128,20 @@ function tick() {
     view.renderWorld(state)
     if (isPaused)
         return
-    Objects.update(state)
-    Trex.update(state)
+    if (isRewinding) {
+        const prevWorld = recording.pop()
+        if (prevWorld)
+            store.dispatch(world.initWorld(prevWorld))
+        else
+            isRewinding = false
+    } else {
+        Objects.update(state)
+        Trex.update(state)
+    }
 }
+
+let isRewinding = false
+export const rewind = () => isRewinding = !isRewinding
 
 export function init() {
     Trex.init()

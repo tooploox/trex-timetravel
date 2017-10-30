@@ -1,4 +1,4 @@
-import { pause, Trex } from "./game"
+import { pause, Trex, rewind } from './game'
 import { Vector, Size, sum } from "./physicsEngine"
 import { mirrorH } from './projection'
 
@@ -99,7 +99,7 @@ class CanvasView implements View {
 
 function initKeyboard() {
     const DuckKey = 40
-    const keycodesMap = { 38: Trex.jump, 32: pause, [DuckKey]: Trex.duck }
+    const keycodesMap = { 38: Trex.jump, 32: pause, [DuckKey]: Trex.duck, 82: rewind }
 
     document.addEventListener('keydown', ({ keyCode }) => {
         if ((keycodesMap as any)[keyCode])

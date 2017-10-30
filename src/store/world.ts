@@ -11,6 +11,7 @@ export namespace Trex {
 
 export const addObjects = actionCreator<Entity[]>('addObjects')
 export const updateObjects = actionCreator<Entity[]>('updateObjects')
+export const initWorld = actionCreator<World>('initWorld')
 
 export type State = World
 
@@ -20,8 +21,12 @@ const initialState: World = {
     objects: [],
     maxView: { x: 0, y: 0, width: 300, height: 100 }
 }
-
+export const recording: World[] = []
 export function reducer(state = initialState, action: redux.Action): State {
+    if (eq(action, initWorld))
+        return action.payload
+    recording.push(state)
+
     if (eq(action, Trex.jump)) {
         const trex: Trex = { ...action.payload, jumpStartT: state.t, jumpStartX: state.trex.location.x }
         return { ...state, trex }
