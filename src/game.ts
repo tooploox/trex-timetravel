@@ -61,7 +61,7 @@ export namespace Trex {
         store.dispatch(world.trex.update(newTrex))
     }
 
-    export const init = () => {
+    export const create = () => {
         const G = Vector(0, -9810)
         const shape = [Rect(11, 15, 17, 26), Rect(2, 17, 9, 18), Rect(20, 1, 22, 15), Rect(14, 20, 20, 4)]
         const body = RigidBody(10, Vector(0, 0), Vector(250, 0), [G])
@@ -74,6 +74,11 @@ export namespace Trex {
             duckingShape: [Rect(0, 5, 62, 20)],
             duckingSize: Size(59, 32),
         }
+        return trex
+    }
+
+    export const init = () => {
+        const { trex } = store.getState().world
         store.dispatch(world.trex.update(trex))
     }
 }
