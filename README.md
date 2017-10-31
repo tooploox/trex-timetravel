@@ -4,8 +4,8 @@ Demo frontend application created for [Tooploox](https://www.tooploox.com/) Open
 
 ## Inspiration
 
-T-Rex timetravel was inspired by Chrome T-rex Game, but additional feature of `time manipulation` (using Redux and Immutable stated) was added.
-Moreover simple `physics engine` was also designed with support of first two Newton Laws. 
+T-Rex timetravel was inspired by Chrome T-rex Game, but additional feature of `time manipulation` (using Redux and Immutable state) was added.
+Moreover simple `physics engine` was also designed with support of Newton's laws of motion.
 
 ![chrome offline game cast](screenshot.gif)
 
