@@ -17,7 +17,7 @@ interface World {
     dt: number
     t: number
     objects?: Entity[]
-    trex?: Trex
+    trex: Trex
 }
 
 interface Entity extends RigidBody {

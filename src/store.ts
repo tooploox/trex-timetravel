@@ -1,5 +1,6 @@
 import * as redux from 'redux'
 import { eq, actionCreatorFactory } from "@/typedActions"
+import { Trex } from './game'
 
 const actionCreator = actionCreatorFactory('world')
 
@@ -17,7 +18,7 @@ export const init = actionCreator<World>('init')
 
 export type State = World
 
-const initialState: World = { t: 0, dt: 1000 / 10, objects: [] }
+const initialState: World = { t: 0, dt: 1000 / 10, objects: [], trex: Trex.create() }
 
 export const recording: World[] = []
 export function reducer(state = initialState, action: redux.Action): State {
