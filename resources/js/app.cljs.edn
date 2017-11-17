@@ -1,0 +1,3 @@
+{:require  [trex.app]
+ :init-fns [trex.app/init]
+ :compiler-options {:asset-path "js/app.out"}}
