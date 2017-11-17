@@ -4,8 +4,10 @@ Demo frontend application created for [Tooploox](https://www.tooploox.com/) Open
 
 ## Inspiration
 
-T-Rex timetravel was inspired by Chrome T-rex Game, but additional feature of `time manipulation` (using Redux and Immutable state) was added.
+T-Rex timetravel was inspired by Chrome T-rex Game, but additional feature of `time manipulation` (using redux-style and Immutable state) was added.
 Moreover simple `physics engine` was also designed with support of Newton's laws of motion.
+
+This part is rewritten version to show version with more parenthesis
 
 ![chrome offline game cast](screenshot.gif)
 
@@ -24,24 +26,23 @@ Moreover simple `physics engine` was also designed with support of Newton's laws
 
 ### On the host machine
 
-Install the `npm` packages described in the `package.json`:
+Install the `boot`:
 
-    npm install
+    brew install boot-clj
 
-Run `webpack` server:
+Run `dev` server:
 
-    npm start
+    boot dev
 
 
-Application should start on http://localhost:4000/.
+Application should start on http://localhost:3000/.
 
 ## Testing
 
 ### On the host machine
 
-    npm test
+    boot auto-test
 
 ## Built With
 
-* TypeScript
-* [Redux](https://github.com/reactjs/redux) - Predictable state container for JavaScript apps
+* ClojureScript
